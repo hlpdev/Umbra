@@ -52,3 +52,6 @@ install_manifest.txt
 # Other system files
 .DS_Store
 Thumbs.db
+
+# Other misc files
+engine/include/Umbra/magics.hpp
