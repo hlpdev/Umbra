@@ -1,0 +1,4 @@
+name = "Umbra Game"
+version = "0.1.0"
+
+entry = "entry.lua"
