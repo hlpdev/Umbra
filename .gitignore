@@ -1,0 +1,54 @@
+# CMake build directories
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+Testing/
+Makefile
+compile_commands.json
+CTestTestfile.cmake
+install_manifest.txt
+
+# CLion project files
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Build artifacts
+*.o
+*.obj
+*.lo
+*.la
+*.al
+*.libs
+*.so
+*.so.*
+*.dylib
+*.dll
+*.a
+*.lib
+*.exe
+*.out
+*.app
+
+# Debug / profiling files
+*.gcno
+*.gcda
+*.gcov
+*.gcov.json
+*.gcov.json.gz
+*.gcda.tmp
+*.gcov.tmp
+*.gcno.tmp
+*.gcda
+*.profraw
+*.profdata
+*.gmon
+
+# Logs
+*.log
+
+# Other system files
+.DS_Store
+Thumbs.db
