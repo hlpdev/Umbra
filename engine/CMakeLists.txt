@@ -21,6 +21,9 @@ target_link_libraries(engine PRIVATE unofficial-sodium::sodium)
 find_path(SOL2_INCLUDE_DIRS "sol/abort.hpp")
 target_include_directories(engine PRIVATE ${SOL2_INCLUDE_DIRS})
 
+find_package(zstd CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE zstd::libzstd)
+
 #[[ END DEPENDENCIES ]]
 
 target_sources(engine PRIVATE ${ENGINE_SRC} ${ENGINE_HDR})

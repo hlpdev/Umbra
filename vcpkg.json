@@ -17,5 +17,8 @@
   }, {
     "name" : "sol2",
     "version>=" : "3.5.0"
+  }, {
+    "name" : "zstd",
+    "version>=" : "1.5.7"
   } ]
 }
