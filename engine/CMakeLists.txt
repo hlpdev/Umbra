@@ -24,6 +24,12 @@ target_include_directories(engine PRIVATE ${SOL2_INCLUDE_DIRS})
 find_package(zstd CONFIG REQUIRED)
 target_link_libraries(engine PRIVATE zstd::libzstd)
 
+find_package(tomlplusplus CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE tomlplusplus::tomlplusplus)
+
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE fmt::fmt)
+
 #[[ END DEPENDENCIES ]]
 
 target_sources(engine PRIVATE ${ENGINE_SRC} ${ENGINE_HDR})
