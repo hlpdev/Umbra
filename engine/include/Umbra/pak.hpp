@@ -76,7 +76,7 @@ namespace umbra {
   public:
 
     PakWriter(const std::filesystem::path& out_file, const std::vector<uint8_t>& secret, const std::filesystem::path& virtual_base);
-    ~PakWriter() const;
+    ~PakWriter();
 
     void add_file(const std::filesystem::path& disk_path, const std::filesystem::path& virtual_override = {});
     void add_tree(const std::filesystem::path& directory_path);

@@ -65,7 +65,7 @@ umbra::PakWriter::PakWriter(const std::filesystem::path &out_file, const std::ve
   derive_key(key, salt, secret);
 }
 
-umbra::PakWriter::~PakWriter() const {
+umbra::PakWriter::~PakWriter() {
   const uint32_t file_count = static_cast<uint32_t>(items.size());
   constexpr uint64_t hdr_size = sizeof(PakHeader);
 
