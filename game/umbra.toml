@@ -2,3 +2,6 @@ name = "Umbra Game"
 version = "0.1.0"
 
 entry = "entry.lua"
+
+source_dir = "source"
+assets_dir = "assets"
