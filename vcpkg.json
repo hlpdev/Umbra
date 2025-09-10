@@ -2,23 +2,38 @@
   "name" : "umbra",
   "version-string" : "1.0.0",
   "builtin-baseline" : "4002e3abc6d3e468c73d2d9777a7dd96af5dc224",
-  "dependencies" : [ {
-    "name" : "vcpkg-cmake-config",
-    "version>=" : "2024-05-23"
-  }, {
-    "name" : "vcpkg-cmake-get-vars",
-    "version>=" : "2025-05-29"
-  }, {
-    "name" : "vcpkg-cmake",
-    "version>=" : "2024-04-23"
-  }, {
-    "name" : "libsodium",
-    "version>=" : "1.0.20#3"
-  }, {
-    "name" : "sol2",
-    "version>=" : "3.5.0"
-  }, {
-    "name" : "zstd",
-    "version>=" : "1.5.7"
-  } ]
+  "dependencies" : [
+    {
+      "name" : "vcpkg-cmake-config",
+      "version>=" : "2024-05-23"
+    },
+    {
+      "name" : "vcpkg-cmake-get-vars",
+      "version>=" : "2025-05-29"
+    },
+    {
+      "name" : "vcpkg-cmake",
+      "version>=" : "2024-04-23"
+    },
+    {
+      "name" : "libsodium",
+      "version>=" : "1.0.20#3"
+    },
+    {
+      "name" : "sol2",
+      "version>=" : "3.5.0"
+    },
+    {
+      "name" : "zstd",
+      "version>=" : "1.5.7"
+    },
+    {
+      "name" : "tomlplusplus",
+      "version>=" : "3.4.0#1"
+    },
+    {
+      "name" : "fmt",
+      "version>=" : "11.2.0"
+    }
+  ]
 }
