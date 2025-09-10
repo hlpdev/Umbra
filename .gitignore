@@ -56,3 +56,4 @@ Thumbs.db
 # Other misc files
 engine/include/Umbra/magics.hpp
 bundle/
+game/UmbraGame/
