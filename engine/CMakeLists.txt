@@ -34,7 +34,7 @@ target_link_libraries(engine PRIVATE fmt::fmt)
 
 target_sources(engine PRIVATE ${ENGINE_SRC} ${ENGINE_HDR})
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_compile_definitions(engine PRIVATE UMBRA_BUILD)
+target_compile_definitions(engine PRIVATE UMBRA_BUILD_DLL)
 
 set_target_properties(engine PROPERTIES OUTPUT_NAME "umbra")
 
