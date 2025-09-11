@@ -5,9 +5,9 @@
 #include "Umbra/config.hpp"
 #include "Umbra/fs-vfs.hpp"
 #include "Umbra/pak-vfs.hpp"
+#include "Umbra/umbra_exception.hpp"
 #include "Umbra/vfs.hpp"
 
-#include <stdexcept>
 #include <vector>
 
 using namespace std::string_literals;
@@ -113,6 +113,8 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, size_t secre
   // TODO
 
   return 0;
+} catch (const UmbraException&) {
+  return 1;
 } catch (const std::exception& e) {
   std::cerr << e.what() << '\n';
   return 1;
@@ -120,10 +122,10 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, size_t secre
 
 void umbra::umbra_fail(const std::string &message) {
   std::cerr << message << '\n';
-  throw std::runtime_error(message);
+  throw UmbraException(message);
 }
 
 void umbra::umbra_fail(const char *message) {
   std::cerr << message << '\n';
-  throw std::runtime_error(message);
+  throw UmbraException(message);
 }
