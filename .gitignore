@@ -34,7 +34,6 @@ install_manifest.txt
 
 # Debug / profiling files
 *.gcno
-*.gcda
 *.gcov
 *.gcov.json
 *.gcov.json.gz
