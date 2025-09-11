@@ -9,7 +9,7 @@ namespace umbra {
   constexpr size_t SECRET_KEY_MAGIC_LEN = sizeof(SECRET_KEY_MAGIC); // NOLINT(*-sizeof-expression)
 
 #pragma pack(push, 1)
-  struct EmbeddedFooter {
+  struct EmbeddedFooter final {
     char magic[SECRET_KEY_MAGIC_LEN];
     uint32_t version;
     uint32_t key_length;
