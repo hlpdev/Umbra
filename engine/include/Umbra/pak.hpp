@@ -58,7 +58,7 @@ namespace umbra {
     uint64_t raw_size;
   };
 
-  class UMBRA_API PakReader {
+  class UMBRA_API PakReader final {
   public:
 
     PakReader(const std::filesystem::path& path, const std::vector<uint8_t>& secret);
@@ -72,7 +72,7 @@ namespace umbra {
     PakFile pak_file;
   };
 
-  class UMBRA_API PakWriter {
+  class UMBRA_API PakWriter final {
   public:
 
     PakWriter(const std::filesystem::path& out_file, const std::vector<uint8_t>& secret, const std::filesystem::path& virtual_base);
