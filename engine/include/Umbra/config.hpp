@@ -7,7 +7,7 @@
 
 namespace umbra {
 
-  struct Config {
+  struct Config final {
     std::string name;
     std::filesystem::path root_dir;
     std::filesystem::path config_file;
@@ -19,4 +19,5 @@ namespace umbra {
   };
 
   UMBRA_API Config load_config(const std::filesystem::path& project_dir);
+  UMBRA_API Config load_config(const std::vector<uint8_t>& data);
 }
