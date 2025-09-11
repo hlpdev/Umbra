@@ -140,10 +140,10 @@ int main(const int argc, const char** argv) try {
   std::vector<uint8_t> secret = generate_secret();
 
   {
-    auto source_writer = std::make_unique<umbra::PakWriter>(out_dir / "source.pak", secret, config.source_dir);
+    auto source_writer = std::make_unique<umbra::PakWriter>(out_dir / "src.pak", secret, config.source_dir);
     source_writer->add_tree(config.source_dir);
 
-    auto assets_writer = std::make_unique<umbra::PakWriter>(out_dir / "assets.pak", secret, config.assets_dir);
+    auto assets_writer = std::make_unique<umbra::PakWriter>(out_dir / "ass.pak", secret, config.assets_dir);
     assets_writer->add_tree(config.assets_dir);
 
     auto config_writer = std::make_unique<umbra::PakWriter>(out_dir / "cfg.pak", secret, project_dir);
