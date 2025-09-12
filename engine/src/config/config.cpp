@@ -19,6 +19,8 @@ umbra::Config parse_config_from_table(toml::table config_toml, std::filesystem::
 
   umbra::Config config{};
   config.name = config_toml["name"].value_or(root.filename().string());
+  config.organization = config_toml["organization"].value_or("");
+  config.version = config_toml["version"].value_or("");
   config.entry = require_string("entry");
 
   if (!root.empty() && !config_path.empty()) {

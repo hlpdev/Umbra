@@ -9,6 +9,10 @@ namespace umbra {
 
   struct Config final {
     std::string name;
+    std::string organization;
+
+    std::string version;
+
     std::filesystem::path root_dir;
     std::filesystem::path config_file;
     std::filesystem::path assets_dir;
