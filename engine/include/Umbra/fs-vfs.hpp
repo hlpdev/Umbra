@@ -17,7 +17,7 @@ namespace umbra {
     std::vector<uint8_t> read_s(std::string_view virtual_path) const override;
     std::vector<std::string> list_s(std::string_view virtual_path) const override;
 
-    void write_s(std::string_view virtual_path, std::vector<uint8_t> data) const override;
+    void write_s(std::string_view virtual_path, const std::vector<uint8_t>& data) const override;
 
     void execute_s(std::string_view virtual_path, sol::state* lua_state) const override;
 

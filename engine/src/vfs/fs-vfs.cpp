@@ -42,13 +42,13 @@ std::vector<std::string> umbra::VFSFSMount::list_s(std::string_view virtual_path
   return list;
 }
 
-void umbra::VFSFSMount::write_s(std::string_view virtual_path, std::vector<uint8_t> data) const {
+void umbra::VFSFSMount::write_s(const std::string_view virtual_path, const std::vector<uint8_t>& data) const {
   if (!exists_s(virtual_path)) {
     umbra_fail("VFSFS: path did not resolve to an existing file");
   }
 
   std::ofstream file(directory_ / virtual_path);
-  file.write(reinterpret_cast<char*>(data.data()), data.size());
+  file.write(reinterpret_cast<char*>(const_cast<unsigned char*>(data.data())), data.size());
   file.close();
 }
 

@@ -35,7 +35,7 @@ std::vector<std::string> umbra::VFSPakMount::list_s(std::string_view virtual_pat
   return out;
 }
 
-void umbra::VFSPakMount::write_s(std::string_view virtual_path, std::vector<uint8_t> data) const {
+void umbra::VFSPakMount::write_s(std::string_view virtual_path, const std::vector<uint8_t>&) const {
   umbra_fail("VFSPak: pak mounts do not support write");
 }
 
