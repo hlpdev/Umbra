@@ -95,7 +95,7 @@ std::vector<uint8_t> umbra::PakReader::read(const std::string& virtual_path) con
   const size_t compressed_capacity = entry.cipher_size - crypto_aead_xchacha20poly1305_ietf_ABYTES;
   std::vector<uint8_t> compressed(compressed_capacity);
 
-  uint64_t compressed_size = 0;
+  size_t compressed_size = 0;
   if (crypto_aead_xchacha20poly1305_ietf_decrypt(
     compressed.data(), &compressed_size, nullptr,
     cipher.data(), cipher.size(),
