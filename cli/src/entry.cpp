@@ -172,6 +172,8 @@ int main(const int argc, const char** argv) try {
 
   copy_shared_libs(cli_dir, out_dir);
 
+  std::cout << "Successfully packaged " << absolute(project_dir) << " -> " << absolute(runner_destination) << '\n';
+
   return 0;
 } catch (const std::exception& e) {
   std::cerr << e.what() << std::endl;
