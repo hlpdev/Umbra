@@ -39,7 +39,7 @@ void umbra::VFSPakMount::write_s(std::string_view virtual_path, const std::vecto
   umbra_fail("VFSPak: pak mounts do not support write");
 }
 
-void umbra::VFSPakMount::execute_s(std::string_view virtual_path, sol::state* lua_state) const {
+void umbra::VFSPakMount::execute_s(std::string_view virtual_path, const std::shared_ptr<sol::state>& lua_state) const {
   if (!exists_s(virtual_path)) {
     umbra_fail("VFSPak: path did not resolve to an existing file");
   }

@@ -67,6 +67,7 @@ struct EngineState {
   umbra::VFS vfs;
   umbra::Config config;
   sol::state lua_state;
+  std::shared_ptr<sol::state> lua_state;
 };
 
 int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t secret_size, int argc, char** argv) try {
@@ -85,6 +86,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
   state.lua_state.set_exception_handler(&lua_exception);
   state.lua_state.set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
   state.vfs.set_lua_state(&state.lua_state);
+  state.vfs = std::make_shared<VFS>(state.lua_state);
 
   state.vfs.mount(
     "cfg://",

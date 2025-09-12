@@ -66,7 +66,7 @@ namespace umbra {
     void remove(std::string_view virtual_path) const;
     void write(std::string_view virtual_path, const std::vector<uint8_t>& data) const;
 
-    void execute(std::string_view virtual_path, sol::state* lua_state) const;
+    void execute(std::string_view virtual_path, const std::shared_ptr<sol::state>& lua_state) const;
 
     constexpr vfs::permissions::VFSPermission permissions() const noexcept {
       return permissions_;
@@ -82,7 +82,7 @@ namespace umbra {
     virtual void remove_s(std::string_view virtual_path) const = 0;
     virtual void write_s(std::string_view virtual_path, const std::vector<uint8_t>& data) const = 0;
 
-    virtual void execute_s(std::string_view virtual_path, sol::state* lua_state) const = 0;
+    virtual void execute_s(std::string_view virtual_path, const std::shared_ptr<sol::state>& lua_state) const = 0;
 
   private:
     vfs::permissions::VFSPermission permissions_;
@@ -90,6 +90,14 @@ namespace umbra {
 
   class UMBRA_API VFS final {
   public:
+
+    explicit VFS(const std::shared_ptr<sol::state> &lua_state);
+    ~VFS() = default;
+
+    VFS(const VFS&) = delete;
+    VFS& operator=(const VFS&) = delete;
+    VFS(VFS&&) noexcept = default;
+    VFS& operator=(VFS&&) noexcept = default;
 
     void mount(std::string prefix, std::unique_ptr<IVFSMount> mount);
     void unmount(std::string_view prefix) noexcept;
@@ -106,15 +114,13 @@ namespace umbra {
 
     bool has_permission(std::string_view mount_prefix, vfs::permissions::VFSPermission permission) const noexcept;
 
-    void set_lua_state(sol::state* lua_state);
-
   private:
 
     std::unordered_map<std::string, std::unique_ptr<IVFSMount>> mounts_;
 
     std::pair<const IVFSMount*, std::string> route(std::string_view virtual_path) const noexcept;
 
-    sol::state* lua_state_;
+    std::shared_ptr<sol::state> lua_state_;
 
   };
 

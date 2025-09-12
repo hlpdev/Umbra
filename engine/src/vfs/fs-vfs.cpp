@@ -52,7 +52,7 @@ void umbra::VFSFSMount::write_s(const std::string_view virtual_path, const std::
   file.close();
 }
 
-void umbra::VFSFSMount::execute_s(std::string_view virtual_path, sol::state* lua_state) const {
+void umbra::VFSFSMount::execute_s(std::string_view virtual_path, const std::shared_ptr<sol::state>& lua_state) const {
   if (!exists_s(virtual_path)) {
     umbra_fail("VFSPak: path did not resolve to an existing file");
   }

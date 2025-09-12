@@ -37,7 +37,7 @@ void umbra::IVFSMount::write(const std::string_view virtual_path, const std::vec
   write_s(virtual_path, data);
 }
 
-void umbra::IVFSMount::execute(std::string_view virtual_path, sol::state* lua_state) const {
+void umbra::IVFSMount::execute(const std::string_view virtual_path, const std::shared_ptr<sol::state>& lua_state) const {
   if (!has_all_permissions(permissions(), vfs::permissions::EXECUTE)) {
     umbra_fail("VFS: insufficient execute permissions");
   }
@@ -60,6 +60,8 @@ void umbra::IVFSMount::remove(std::string_view virtual_path) const {
 
   remove_s(virtual_path);
 }
+
+umbra::VFS::VFS(const std::shared_ptr<sol::state> &lua_state) : lua_state_(lua_state) {}
 
 void umbra::VFS::mount(std::string prefix, std::unique_ptr<IVFSMount> mount) {
   if (prefix.empty() || !prefix.ends_with("://")) {
@@ -157,8 +159,4 @@ bool umbra::VFS::has_permission(std::string_view mount_prefix, vfs::permissions:
   }
 
   return has_all_permissions(mount->permissions(), permission);
-}
-
-void umbra::VFS::set_lua_state(sol::state* lua_state) {
-  lua_state_ = lua_state;
 }
