@@ -1,12 +1,8 @@
-# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: CMake on multiple platforms + vcpkg integration
+name: CMake + vcpkg (multi-OS)
 
 on:
-  push:
-    branches: [ "master" ]
+  push: { branches: [ main ] }
   pull_request:
-    branches: [ "master" ]
 
 jobs:
   build:
@@ -27,16 +23,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+        with: { submodules: false }
 
-      - name: Set up CMake & Ninja
+      - name: CMake & Ninja
         uses: lukka/get-cmake@latest
+      - name: Ensure Ninja on PATH (fallback)
+        uses: ashutoshvarma/setup-ninja@v1.1
 
-      - name: Set up vcpkg (manifest-aware, cached)
+      - name: Setup vcpkg (manifest-aware, cached)
         uses: lukka/run-vcpkg@v11
 
-      - name: Configure (CMake + vcpkg toolchain)
+      - name: Configure
         run: >
           cmake -S . -B build -G Ninja
           -DCMAKE_BUILD_TYPE=Release
@@ -45,3 +42,6 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
