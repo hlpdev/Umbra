@@ -33,6 +33,12 @@ jobs:
       - name: Ensure Ninja on PATH (fallback)
         uses: ashutoshvarma/setup-ninja@v1.1
 
+      - name: windows msvc requirement
+        if: startsWith(runner.os, 'Windows')
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
       - name: macOS build deps
         if: startsWith(runner.os, 'macOS')
         run: |
@@ -42,7 +48,18 @@ jobs:
       - name: Setup vcpkg (manifest-aware, cached)
         uses: lukka/run-vcpkg@v11
 
-      - name: Configure
+      - name: Configure (Windows)
+        if: startsWith(runner.os, 'Windows')
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_C_COMPILER=cl
+          -DCMAKE_CXX_COMPILER=cl
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+          -DVCPKG_TARGET_TRIPLET="${{ matrix.triplet }}"
+
+      - name: Configure (Linux/MacOS)
+        if: !startsWith(runner.os, 'Windows')
         run: >
           cmake -S . -B build -G Ninja
           -DCMAKE_BUILD_TYPE=Release

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.30)
 project(Umbra LANGUAGES CXX VERSION 0.1.0)
 
+if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(FATAL_ERROR "Detected MinGW on Windows, but triplet is x64-windows (MSVC). Use MSVC or switch triplet.")
+endif()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
