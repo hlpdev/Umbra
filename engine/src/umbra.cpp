@@ -53,7 +53,7 @@ static void lua_panic(sol::optional<std::string> maybe_message) {
   std::exit(1);
 }
 
-static int lua_exception(lua_State* L, sol::optional<const std::exception&> exception, sol::string_view description) {
+static int lua_exception(lua_State* L, const sol::optional<const std::exception&> exception, sol::string_view description) {
   std::cerr << "Lua: an exception occurred: " << description << '\n';
   if (exception) {
     std::cout << '\t' << description << '\n';

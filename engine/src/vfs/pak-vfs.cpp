@@ -8,15 +8,15 @@ umbra::VFSPakMount::VFSPakMount(const std::filesystem::path &pak_path, const std
   std::ranges::sort(all_);
 }
 
-bool umbra::VFSPakMount::exists_s(std::string_view virtual_path) const {
+bool umbra::VFSPakMount::exists_s(const std::string_view virtual_path) const {
   return std::ranges::binary_search(all_, std::string(virtual_path));
 }
 
-std::vector<uint8_t> umbra::VFSPakMount::read_s(std::string_view virtual_path) const {
+std::vector<uint8_t> umbra::VFSPakMount::read_s(const std::string_view virtual_path) const {
   return reader_->read(std::string(virtual_path));
 }
 
-std::vector<std::string> umbra::VFSPakMount::list_s(std::string_view virtual_path) const {
+std::vector<std::string> umbra::VFSPakMount::list_s(const std::string_view virtual_path) const {
   if (virtual_path.empty()) return all_;
 
   std::vector<std::string> out;

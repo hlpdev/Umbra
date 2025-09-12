@@ -5,7 +5,7 @@ umbra::IVFSMount::IVFSMount(const vfs::permissions::VFSPermission permissions) {
   permissions_ = permissions;
 }
 
-bool umbra::IVFSMount::exists(std::string_view virtual_path) const {
+bool umbra::IVFSMount::exists(const std::string_view virtual_path) const {
   if (!has_all_permissions(permissions(), vfs::permissions::READ)) {
     umbra_fail("VFS: insufficient read permissions");
   }
@@ -13,7 +13,7 @@ bool umbra::IVFSMount::exists(std::string_view virtual_path) const {
   return exists_s(virtual_path);
 }
 
-std::vector<uint8_t> umbra::IVFSMount::read(std::string_view virtual_path) const {
+std::vector<uint8_t> umbra::IVFSMount::read(const std::string_view virtual_path) const {
   if (!has_all_permissions(permissions(), vfs::permissions::READ)) {
     umbra_fail("VFS: insufficient read permissions");
   }
@@ -21,7 +21,7 @@ std::vector<uint8_t> umbra::IVFSMount::read(std::string_view virtual_path) const
   return read_s(virtual_path);
 }
 
-std::vector<std::string> umbra::IVFSMount::list(std::string_view virtual_path) const {
+std::vector<std::string> umbra::IVFSMount::list(const std::string_view virtual_path) const {
   if (!has_all_permissions(permissions(), vfs::permissions::LIST)) {
     umbra_fail("VFS: insufficient list permissions");
   }
@@ -45,7 +45,7 @@ void umbra::IVFSMount::execute(const std::string_view virtual_path, const std::s
   execute_s(virtual_path, lua_state);
 }
 
-void umbra::IVFSMount::create(std::string_view virtual_path) const {
+void umbra::IVFSMount::create(const std::string_view virtual_path) const {
   if (!has_all_permissions(permissions(), vfs::permissions::CREATE)) {
     umbra_fail("VFS: insufficient create permissions");
   }
@@ -53,7 +53,7 @@ void umbra::IVFSMount::create(std::string_view virtual_path) const {
   create_s(virtual_path);
 }
 
-void umbra::IVFSMount::remove(std::string_view virtual_path) const {
+void umbra::IVFSMount::remove(const std::string_view virtual_path) const {
   if (!has_all_permissions(permissions(), vfs::permissions::REMOVE)) {
     umbra_fail("VFS: insufficient remove permissions");
   }
@@ -71,16 +71,16 @@ void umbra::VFS::mount(std::string prefix, std::unique_ptr<IVFSMount> mount) {
   mounts_[std::move(prefix)] = std::move(mount);
 }
 
-void umbra::VFS::unmount(std::string_view prefix) noexcept {
+void umbra::VFS::unmount(const std::string_view prefix) noexcept {
   mounts_.erase(std::string(prefix));
 }
 
-bool umbra::VFS::exists(std::string_view virtual_path) const noexcept {
+bool umbra::VFS::exists(const std::string_view virtual_path) const noexcept {
   auto [mount, sub] = route(virtual_path);
   return mount && mount->exists(sub);
 }
 
-std::vector<uint8_t> umbra::VFS::read(std::string_view virtual_path) const {
+std::vector<uint8_t> umbra::VFS::read(const std::string_view virtual_path) const {
   auto [mount, sub] = route(virtual_path);
   if (!mount) {
     umbra_fail("VFS: mount not found");
@@ -89,7 +89,7 @@ std::vector<uint8_t> umbra::VFS::read(std::string_view virtual_path) const {
   return mount->read(sub);
 }
 
-std::vector<std::string> umbra::VFS::list(std::string_view virtual_path) const {
+std::vector<std::string> umbra::VFS::list(const std::string_view virtual_path) const {
   auto [mount, sub] = route(virtual_path);
   if (!mount) {
     umbra_fail("VFS: mount not found");
@@ -98,7 +98,7 @@ std::vector<std::string> umbra::VFS::list(std::string_view virtual_path) const {
   return mount->list(sub);
 }
 
-void umbra::VFS::create(std::string_view virtual_path) const {
+void umbra::VFS::create(const std::string_view virtual_path) const {
   auto [mount, sub] = route(virtual_path);
   if (!mount) {
     umbra_fail("VFS: mount not found");
@@ -107,7 +107,7 @@ void umbra::VFS::create(std::string_view virtual_path) const {
   return mount->create(sub);
 }
 
-void umbra::VFS::remove(std::string_view virtual_path) const {
+void umbra::VFS::remove(const std::string_view virtual_path) const {
   auto [mount, sub] = route(virtual_path);
   if (!mount) {
     umbra_fail("VFS: mount not found");
@@ -126,7 +126,7 @@ void umbra::VFS::write(const std::string_view virtual_path, const std::vector<ui
   mount->write(sub, data);
 }
 
-void umbra::VFS::execute(std::string_view virtual_path) const {
+void umbra::VFS::execute(const std::string_view virtual_path) const {
   auto [mount, sub] = route(virtual_path);
   if (!mount) {
     umbra_fail("VFS: mount not found");
@@ -135,7 +135,7 @@ void umbra::VFS::execute(std::string_view virtual_path) const {
   return mount->execute(sub, lua_state_);
 }
 
-std::pair<const umbra::IVFSMount *, std::string> umbra::VFS::route(std::string_view virtual_path) const noexcept {
+std::pair<const umbra::IVFSMount *, std::string> umbra::VFS::route(const std::string_view virtual_path) const noexcept {
   for (auto const& [prefix, mount] : mounts_) {
     if (virtual_path.starts_with(prefix)) {
       std::string sub;
@@ -152,7 +152,7 @@ std::pair<const umbra::IVFSMount *, std::string> umbra::VFS::route(std::string_v
   return { nullptr, {} };
 }
 
-bool umbra::VFS::has_permission(std::string_view mount_prefix, vfs::permissions::VFSPermission permission) const noexcept {
+bool umbra::VFS::has_permission(const std::string_view mount_prefix, const vfs::permissions::VFSPermission permission) const noexcept {
   auto [mount, _] = route(mount_prefix);
   if (!mount) {
     umbra_fail("VFS: mount not found");
