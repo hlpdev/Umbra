@@ -51,7 +51,7 @@ namespace umbra {
     }
   }
 
-  UMBRA_API class IVFSMount {
+  class UMBRA_API IVFSMount {
   public:
 
     explicit IVFSMount(vfs::permissions::VFSPermission permissions);
@@ -88,7 +88,7 @@ namespace umbra {
     vfs::permissions::VFSPermission permissions_;
   };
 
-  UMBRA_API class VFS final {
+  class UMBRA_API VFS final {
   public:
 
     void mount(std::string prefix, std::unique_ptr<IVFSMount> mount);

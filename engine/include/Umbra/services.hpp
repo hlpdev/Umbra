@@ -14,7 +14,7 @@ namespace umbra {
     virtual ~IService() = default;
   };
 
-  UMBRA_API class ServiceRegistry final {
+  class UMBRA_API ServiceRegistry final {
   public:
 
     template<class T, class... Args>

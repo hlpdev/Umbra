@@ -102,7 +102,7 @@ static void append_secret_trailer(const std::filesystem::path& runner_path, cons
     umbra::umbra_fail("CLI: could not open runner for secret appendage");
   }
 
-  umbra::EmbeddedFooter footer = umbra::make_footer(static_cast<uint32_t>(secret.size()));
+  const umbra::EmbeddedFooter footer = umbra::make_footer(static_cast<uint32_t>(secret.size()));
   file.write(reinterpret_cast<const char*>(secret.data()), static_cast<std::streamsize>(secret.size()));
   file.write(reinterpret_cast<const char*>(&footer), sizeof(footer));
 
@@ -119,8 +119,8 @@ static constexpr const char* RUNNER_NAMES[] = { "umbra-runner" };
 
 static std::filesystem::path find_runner(const std::filesystem::path& cli_dir) {
   for (const char* name : RUNNER_NAMES) {
-    std::filesystem::path path = std::filesystem::absolute(cli_dir / name);
-    if (std::filesystem::exists(path)) {
+    std::filesystem::path path = absolute(cli_dir / name);
+    if (exists(path)) {
       return path;
     }
   }
@@ -140,13 +140,13 @@ int main(const int argc, const char** argv) try {
   std::vector<uint8_t> secret = generate_secret();
 
   {
-    auto source_writer = std::make_unique<umbra::PakWriter>(out_dir / "src.pak", secret, config.source_dir);
+    const auto source_writer = std::make_unique<umbra::PakWriter>(out_dir / "src.pak", secret, config.source_dir);
     source_writer->add_tree(config.source_dir);
 
-    auto assets_writer = std::make_unique<umbra::PakWriter>(out_dir / "ass.pak", secret, config.assets_dir);
+    const auto assets_writer = std::make_unique<umbra::PakWriter>(out_dir / "ass.pak", secret, config.assets_dir);
     assets_writer->add_tree(config.assets_dir);
 
-    auto config_writer = std::make_unique<umbra::PakWriter>(out_dir / "cfg.pak", secret, project_dir);
+    const auto config_writer = std::make_unique<umbra::PakWriter>(out_dir / "cfg.pak", secret, project_dir);
     config_writer->add_file(config.config_file);
   }
 
@@ -159,7 +159,7 @@ int main(const int argc, const char** argv) try {
 #endif
 
   { // Copy runner to output
-    std::filesystem::path runner_source = find_runner(cli_dir);
+    const std::filesystem::path runner_source = find_runner(cli_dir);
     std::error_code ec;
     copy_file(runner_source, runner_destination, std::filesystem::copy_options::overwrite_existing, ec);
 

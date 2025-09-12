@@ -5,7 +5,7 @@
 
 namespace umbra {
 
-  UMBRA_API class VFSPakMount final : public IVFSMount {
+  class UMBRA_API VFSPakMount final : public IVFSMount {
   public:
 
     explicit VFSPakMount(const std::filesystem::path& pak_path, const std::vector<uint8_t>& secret, vfs::permissions::VFSPermission permissions);
