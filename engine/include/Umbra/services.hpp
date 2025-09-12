@@ -18,17 +18,16 @@ namespace umbra {
   public:
 
     template<class T, class... Args>
-    T* emplace(const std::string& name, Args&&... args) {
+    std::shared_ptr<T> emplace(const std::string& name, Args&&... args) {
       static_assert(std::is_base_of_v<IService, T>, "Registered services must inherit from IService");
 
-      auto service = std::make_unique<T>(std::forward<Args>(args)...);
-      auto* raw = service.get();
-      services_[name] = std::move(service);
-      return raw;
+      auto service = std::make_shared<T>(std::forward<Args>(args)...);
+      services_.emplace(name, std::move(service));
+      return service;
     }
 
     template<class T>
-    T* get(const std::string& name) const {
+    std::shared_ptr<T> get(const std::string& name) const {
       static_assert(std::is_base_of_v<IService, T>, "Registered services must inherit from IService");
 
       const auto it = services_.find(name);
@@ -36,7 +35,7 @@ namespace umbra {
     }
 
   private:
-    std::unordered_map<std::string, std::unique_ptr<IService>> services_;
+    std::unordered_map<std::string, std::shared_ptr<IService>> services_;
   };
 
 }
