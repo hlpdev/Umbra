@@ -63,6 +63,7 @@ static int lua_exception(lua_State* L, sol::optional<const std::exception&> exce
 }
 
 struct EngineState {
+  umbra::ServiceRegistry service_registry;
   umbra::VFS vfs;
   umbra::Config config;
   sol::state lua_state;
@@ -77,6 +78,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
     umbra_fail("Umbra: secret is empty");
   }
 
+  // ReSharper disable once CppTemplateArgumentsCanBeDeduced
   std::vector<uint8_t> key(secret, secret + secret_size);
 
   EngineState state{};
