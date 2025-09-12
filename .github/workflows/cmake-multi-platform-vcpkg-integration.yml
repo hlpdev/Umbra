@@ -1,0 +1,49 @@
+name: CMake + vcpkg (multi-OS)
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            triplet: x64-linux
+          - os: macos-14
+            triplet: arm64-osx
+          - os: windows-latest
+            triplet: x64-windows
+    runs-on: ${{ matrix.os }}
+
+    env:
+      VCPKG_FEATURE_FLAGS: manifests,binarycaching
+
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: false }
+
+      - name: CMake & Ninja
+        uses: lukka/get-cmake@latest
+      - name: Ensure Ninja on PATH (fallback)
+        uses: ashutoshvarma/setup-ninja@v1.1
+
+      - name: Setup vcpkg (manifest-aware, cached)
+        uses: lukka/run-vcpkg@v11
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+          -DVCPKG_TARGET_TRIPLET="${{ matrix.triplet }}"
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
