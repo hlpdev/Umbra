@@ -7,7 +7,7 @@ std::filesystem::path umbra::Config::out_dir() const {
   return std::filesystem::current_path() / name;
 }
 
-umbra::Config parse_config_from_table(toml::table config_toml, std::filesystem::path root = {}, std::filesystem::path config_path = {}) {
+umbra::Config parse_config_from_table(toml::table config_toml, const std::filesystem::path& root = {}, const std::filesystem::path& config_path = {}) {
   auto require_string = [&](std::string_view key) -> std::string {
     const toml::node_view<toml::node> value = config_toml[key];
     if (!value || !value.is_string()) {
@@ -27,8 +27,8 @@ umbra::Config parse_config_from_table(toml::table config_toml, std::filesystem::
     config.root_dir = root;
     config.config_file = config_path;
 
-    std::string assets_relative = config_toml["assets_dir"].value_or("assets");
-    std::string source_relative = config_toml["source_dir"].value_or("source");
+    const std::string assets_relative = config_toml["assets_dir"].value_or("assets");
+    const std::string source_relative = config_toml["source_dir"].value_or("source");
 
     config.assets_dir = absolute(root / assets_relative);
     config.source_dir = absolute(root / source_relative);
