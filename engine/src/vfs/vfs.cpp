@@ -29,7 +29,7 @@ std::vector<std::string> umbra::IVFSMount::list(std::string_view virtual_path) c
   return list_s(virtual_path);
 }
 
-void umbra::IVFSMount::write(std::string_view virtual_path, std::vector<uint8_t> data) const {
+void umbra::IVFSMount::write(const std::string_view virtual_path, const std::vector<uint8_t>& data) const {
   if (!has_all_permissions(permissions(), vfs::permissions::WRITE)) {
     umbra_fail("VFS: insufficient write permissions");
   }
@@ -115,7 +115,7 @@ void umbra::VFS::remove(std::string_view virtual_path) const {
 }
 
 
-void umbra::VFS::write(std::string_view virtual_path, std::vector<uint8_t> data) const {
+void umbra::VFS::write(const std::string_view virtual_path, const std::vector<uint8_t>& data) const {
   auto [mount, sub] = route(virtual_path);
   if (!mount) {
     umbra_fail("VFS: mount not found");

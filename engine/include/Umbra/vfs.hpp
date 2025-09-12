@@ -64,7 +64,7 @@ namespace umbra {
 
     void create(std::string_view virtual_path) const;
     void remove(std::string_view virtual_path) const;
-    void write(std::string_view virtual_path, std::vector<uint8_t> data) const;
+    void write(std::string_view virtual_path, const std::vector<uint8_t>& data) const;
 
     void execute(std::string_view virtual_path, sol::state* lua_state) const;
 
