@@ -1,4 +1,5 @@
 #include "Umbra/umbra.hpp"
+#include "Umbra/services.hpp"
 
 #include <iostream>
 
@@ -7,6 +8,9 @@
 #include "Umbra/pak-vfs.hpp"
 #include "Umbra/umbra_exception.hpp"
 #include "Umbra/vfs.hpp"
+
+#define SOL_ALL_SAFETIES_ON 1
+#include <sol/sol.hpp>
 
 #include <vector>
 
@@ -39,12 +43,32 @@ std::filesystem::path user_data_root() {
 #endif
 }
 
+static void lua_panic(sol::optional<std::string> maybe_message) {
+  std::cerr << "Lua: lua is in a panic state and will now abort" << '\n';
+  if (maybe_message) {
+    const std::string& message = maybe_message.value();
+    std::cerr << '\t' << message << '\n';
+  }
+
+  std::exit(1);
+}
+
+static int lua_exception(lua_State* L, sol::optional<const std::exception&> exception, sol::string_view description) {
+  std::cerr << "Lua: an exception occurred: " << description << '\n';
+  if (exception) {
+    std::cout << '\t' << description << '\n';
+  }
+
+  return sol::stack::push(L, description);
+}
+
 struct EngineState {
   umbra::VFS vfs;
   umbra::Config config;
+  sol::state lua_state;
 };
 
-int umbra::umbra_run(const char* entry_path, const uint8_t* secret, size_t secret_size, int argc, char** argv) try {
+int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t secret_size, int argc, char** argv) try {
   if (!entry_path || !*entry_path) {
     umbra_fail("Umbra: entry path is empty");
   }
@@ -56,6 +80,9 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, size_t secre
   std::vector<uint8_t> key(secret, secret + secret_size);
 
   EngineState state{};
+  state.lua_state.set_exception_handler(&lua_exception);
+  state.lua_state.set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
+  state.vfs.set_lua_state(&state.lua_state);
 
   state.vfs.mount(
     "cfg://",
@@ -101,7 +128,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, size_t secre
   state.vfs.mount(
     "user://",
     std::make_unique<VFSFSMount>(
-      user_data_root() / sanitize_alphanumeric(state.config.name),
+      user_data_root() / sanitize_alphanumeric(state.config.organization) / sanitize_alphanumeric(state.config.name),
       vfs::permissions::READ | vfs::permissions::WRITE | vfs::permissions::CREATE | vfs::permissions::REMOVE | vfs::permissions::LIST
     )
   );
@@ -110,7 +137,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, size_t secre
     umbra_fail("Umbra: entry script not found");
   }
 
-  // TODO
+  state.vfs.execute("src://"s + entry_path);
 
   return 0;
 } catch (const UmbraException&) {
