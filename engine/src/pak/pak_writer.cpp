@@ -133,9 +133,16 @@ void umbra::PakWriter::add_file(const std::filesystem::path &disk_path, const st
   const uint64_t ad_len = item.virtual_path.size();
 
   std::vector<uint8_t> cipher(compressed.size() + crypto_aead_xchacha20poly1305_ietf_ABYTES);
-  uint64_t cipher_length = 0;
+  unsigned long long cipher_length = 0;
 
-  crypto_aead_xchacha20poly1305_ietf_encrypt(cipher.data(), &cipher_length, compressed.data(), compressed.size(), ad, ad_len, nullptr, item.nonce.data(), key.data());
+  crypto_aead_xchacha20poly1305_ietf_encrypt(
+    cipher.data(), &cipher_length,
+    compressed.data(), compressed.size(),
+    ad, ad_len,
+    nullptr,
+    item.nonce.data(),
+    key.data()
+  );
 
   cipher.resize(cipher_length);
   item.cipher = std::move(cipher);
