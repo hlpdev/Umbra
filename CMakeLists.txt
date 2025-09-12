@@ -15,7 +15,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}" CACHE PATH "" FORCE)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIR}" CACHE PATH "" FORCE)
 
 function(bundle_runtime_dlls tgt)
-    # ---- Runtime DLLs (safe everywhere; empty list when not applicable) ----
     set(_dll_script "${CMAKE_CURRENT_BINARY_DIR}/copy_${tgt}_dlls.cmake")
     file(GENERATE OUTPUT "${_dll_script}" CONTENT
             "set(dlls \"$<TARGET_RUNTIME_DLLS:${tgt}>\")
@@ -31,21 +30,23 @@ endif()
     add_custom_command(TARGET ${tgt} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Bundling runtime DLLs for ${tgt}"
             COMMAND ${CMAKE_COMMAND} -P "${_dll_script}"
-            VERBATIM
-    )
+            VERBATIM)
 
-    # ---- PDB copy (only where it makes sense) ----
+    # --- PDB copy (MSVC only) ---
     if(MSVC)
-        get_target_property(_type ${tgt} TYPE)
-        if(_type STREQUAL "EXECUTABLE" OR _type STREQUAL "SHARED_LIBRARY" OR _type STREQUAL "MODULE_LIBRARY")
-            add_custom_command(TARGET ${tgt} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E echo "Copying PDB for ${tgt} (if any)"
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "$<TARGET_PDB_FILE:${tgt}>"
-                    "$<TARGET_FILE_DIR:${tgt}>"
-                    VERBATIM
-            )
-        endif()
+        set(_pdb_script "${CMAKE_CURRENT_BINARY_DIR}/copy_${tgt}_pdb.cmake")
+        file(GENERATE OUTPUT "${_pdb_script}" CONTENT
+                "set(src \"$<TARGET_PDB_FILE:${tgt}>\")
+set(dst \"$<TARGET_FILE_DIR:${tgt}>\")
+if(NOT \"${src}\" STREQUAL \"\" AND EXISTS \"${src}\")
+  # Write to a concrete file path rather than a directory to dodge quoting bugs
+  file(COPY_FILE \"${src}\" \"${dst}/$<TARGET_FILE_BASE_NAME:${tgt}>.pdb\" ONLY_IF_DIFFERENT)
+endif()
+")
+        add_custom_command(TARGET ${tgt} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E echo "Copying PDB for ${tgt} (if any)"
+                COMMAND ${CMAKE_COMMAND} -P "${_pdb_script}"
+                VERBATIM)
     endif()
 endfunction()
 
