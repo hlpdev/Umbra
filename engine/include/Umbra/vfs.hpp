@@ -22,31 +22,31 @@ namespace umbra {
       EXECUTE = 1U << 5
     };
 
-    constexpr VFSPermission operator|(VFSPermission a, VFSPermission b) noexcept {
+    constexpr VFSPermission operator|(const VFSPermission a, const VFSPermission b) noexcept {
       return static_cast<VFSPermission>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
     }
 
-    constexpr VFSPermission operator&(VFSPermission a, VFSPermission b) noexcept {
+    constexpr VFSPermission operator&(const VFSPermission a, const VFSPermission b) noexcept {
       return static_cast<VFSPermission>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
     }
 
-    constexpr VFSPermission operator^(VFSPermission a, VFSPermission b) noexcept {
+    constexpr VFSPermission operator^(const VFSPermission a, const VFSPermission b) noexcept {
       return static_cast<VFSPermission>(static_cast<uint32_t>(a) ^ static_cast<uint32_t>(b));
     }
 
-    constexpr VFSPermission operator~(VFSPermission a) noexcept {
+    constexpr VFSPermission operator~(const VFSPermission a) noexcept {
       return static_cast<VFSPermission>(~static_cast<uint32_t>(a));
     }
 
-    inline VFSPermission& operator|=(VFSPermission& a, VFSPermission b) noexcept { return a = (a | b); }
-    inline VFSPermission& operator&=(VFSPermission& a, VFSPermission b) noexcept { return a = (a & b); }
-    inline VFSPermission& operator^=(VFSPermission& a, VFSPermission b) noexcept { return a = (a ^ b); }
+    inline VFSPermission& operator|=(VFSPermission& a, const VFSPermission b) noexcept { return a = (a | b); }
+    inline VFSPermission& operator&=(VFSPermission& a, const VFSPermission b) noexcept { return a = (a & b); }
+    inline VFSPermission& operator^=(VFSPermission& a, const VFSPermission b) noexcept { return a = (a ^ b); }
 
-    constexpr bool has_all_permissions(VFSPermission set, VFSPermission required) noexcept {
+    constexpr bool has_all_permissions(const VFSPermission set, const VFSPermission required) noexcept {
       return (set & required) == required;
     }
 
-    constexpr bool has_any_permission(VFSPermission set, VFSPermission any_of) noexcept {
+    constexpr bool has_any_permission(const VFSPermission set, const VFSPermission any_of) noexcept {
       return static_cast<uint32_t>(set & any_of) != 0u;
     }
   }
