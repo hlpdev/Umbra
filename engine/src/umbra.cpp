@@ -63,10 +63,9 @@ static int lua_exception(lua_State* L, sol::optional<const std::exception&> exce
 }
 
 struct EngineState {
-  umbra::ServiceRegistry service_registry;
-  umbra::VFS vfs;
   umbra::Config config;
-  sol::state lua_state;
+  std::shared_ptr<umbra::ServiceRegistry> service_registry;
+  std::shared_ptr<umbra::VFS> vfs;
   std::shared_ptr<sol::state> lua_state;
 };
 
@@ -83,12 +82,12 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
   std::vector<uint8_t> key(secret, secret + secret_size);
 
   EngineState state{};
-  state.lua_state.set_exception_handler(&lua_exception);
-  state.lua_state.set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
-  state.vfs.set_lua_state(&state.lua_state);
+  state.lua_state = std::make_shared<sol::state>();
+  state.lua_state->set_exception_handler(&lua_exception);
+  state.lua_state->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
   state.vfs = std::make_shared<VFS>(state.lua_state);
 
-  state.vfs.mount(
+  state.vfs->mount(
     "cfg://",
     std::make_unique<VFSPakMount>(
       "cfg.pak",
@@ -97,13 +96,13 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
     )
   );
 
-  if (!state.vfs.exists("cfg://umbra.toml")) {
+  if (!state.vfs->exists("cfg://umbra.toml")) {
     umbra_fail("Umbra: cfg.pak does not contain umbra.toml");
   }
 
-  state.config = load_config(state.vfs.read("cfg://umbra.toml"));
+  state.config = load_config(state.vfs->read("cfg://umbra.toml"));
 
-  state.vfs.mount(
+  state.vfs->mount(
     "src://",
     std::make_unique<VFSPakMount>(
       "src.pak",
@@ -112,7 +111,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
     )
   );
 
-  state.vfs.mount(
+  state.vfs->mount(
     "assets://",
     std::make_unique<VFSPakMount>(
       "ass.pak",
@@ -121,7 +120,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
     )
   );
 
-  state.vfs.mount(
+  state.vfs->mount(
     "data://",
     std::make_unique<VFSFSMount>(
       "data",
@@ -129,7 +128,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
     )
   );
 
-  state.vfs.mount(
+  state.vfs->mount(
     "user://",
     std::make_unique<VFSFSMount>(
       user_data_root() / sanitize_alphanumeric(state.config.organization) / sanitize_alphanumeric(state.config.name),
@@ -137,11 +136,11 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
     )
   );
 
-  if (!state.vfs.exists("src://"s + entry_path)) {
+  if (!state.vfs->exists("src://"s + entry_path)) {
     umbra_fail("Umbra: entry script not found");
   }
 
-  state.vfs.execute("src://"s + entry_path);
+  state.vfs->execute("src://"s + entry_path);
 
   return 0;
 } catch (const UmbraException&) {
