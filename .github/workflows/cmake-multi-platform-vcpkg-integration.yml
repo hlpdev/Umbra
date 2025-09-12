@@ -1,0 +1,47 @@
+# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
+name: CMake on multiple platforms + vcpkg integration
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            triplet: x64-linux
+          - os: macos-14
+            triplet: arm64-osx
+          - os: windows-latest
+            triplet: x64-windows
+    runs-on: ${{ matrix.os }}
+
+    env:
+      VCPKG_FEATURE_FLAGS: manifests,binarycaching
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up CMake & Ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Set up vcpkg (manifest-aware, cached)
+        uses: lukka/run-vcpkg@v11
+
+      - name: Configure (CMake + vcpkg toolchain)
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+          -DVCPKG_TARGET_TRIPLET="${{ matrix.triplet }}"
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
