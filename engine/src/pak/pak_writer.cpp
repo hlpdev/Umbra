@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <zstd.h>
+#include <cstring>
 
 static std::vector<uint8_t> read_all(const std::filesystem::path& path) {
   std::ifstream file(path, std::ios::binary);
