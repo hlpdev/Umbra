@@ -1,5 +1,6 @@
 name = "Umbra Game"
 version = "0.1.0"
+organization = "hlpdev"
 
 entry = "entry.lua"
 
