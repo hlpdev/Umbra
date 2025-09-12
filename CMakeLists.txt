@@ -11,7 +11,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}" CACHE PATH "" FORCE)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIR}" CACHE PATH "" FORCE)
 
 function(bundle_runtime_dlls tgt)
-    # Script to copy dependent runtime DLLs (evaluated per-config)
+    # ---- Runtime DLLs (safe everywhere; empty list when not applicable) ----
     set(_dll_script "${CMAKE_CURRENT_BINARY_DIR}/copy_${tgt}_dlls.cmake")
     file(GENERATE OUTPUT "${_dll_script}" CONTENT
             "set(dlls \"$<TARGET_RUNTIME_DLLS:${tgt}>\")
@@ -24,24 +24,25 @@ if(dlls)
   endforeach()
 endif()
 ")
-
-    # Script to copy PDB (if present) on MSVC
-    set(_pdb_script "${CMAKE_CURRENT_BINARY_DIR}/copy_${tgt}_pdb.cmake")
-    file(GENERATE OUTPUT "${_pdb_script}" CONTENT
-            "set(src \"$<TARGET_PDB_FILE:${tgt}>\")
-set(dest \"$<TARGET_FILE_DIR:${tgt}>\")
-if(NOT src STREQUAL \"\")
-  if(EXISTS \"${src}\")
-    execute_process(COMMAND \"${CMAKE_COMMAND}\" -E copy_if_different \"${src}\" \"${dest}\")
-  endif()
-endif()
-")
-
     add_custom_command(TARGET ${tgt} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Bundling runtime DLLs for ${tgt}"
             COMMAND ${CMAKE_COMMAND} -P "${_dll_script}"
-            COMMAND ${CMAKE_COMMAND} -P "${_pdb_script}"
+            VERBATIM
     )
+
+    # ---- PDB copy (only where it makes sense) ----
+    if(MSVC)
+        get_target_property(_type ${tgt} TYPE)
+        if(_type STREQUAL "EXECUTABLE" OR _type STREQUAL "SHARED_LIBRARY" OR _type STREQUAL "MODULE_LIBRARY")
+            add_custom_command(TARGET ${tgt} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E echo "Copying PDB for ${tgt} (if any)"
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_PDB_FILE:${tgt}>"
+                    "$<TARGET_FILE_DIR:${tgt}>"
+                    VERBATIM
+            )
+        endif()
+    endif()
 endfunction()
 
 add_subdirectory(engine)
