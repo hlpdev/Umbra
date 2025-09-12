@@ -30,6 +30,10 @@ target_link_libraries(engine PRIVATE tomlplusplus::tomlplusplus)
 find_package(fmt CONFIG REQUIRED)
 target_link_libraries(engine PRIVATE fmt::fmt)
 
+find_package(Lua REQUIRED)
+target_include_directories(engine PRIVATE ${LUA_INCLUDE_DIR})
+target_link_libraries(engine PRIVATE ${LUA_LIBRARIES})
+
 #[[ END DEPENDENCIES ]]
 
 target_sources(engine PRIVATE ${ENGINE_SRC} ${ENGINE_HDR})
