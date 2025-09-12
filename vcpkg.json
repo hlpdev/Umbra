@@ -25,7 +25,7 @@
     "version>=" : "3.4.0#1"
   }, {
     "name" : "fmt",
-    "version>=" : "11.2.0"
+    "version>=" : "11.0.2#1"
   }, {
     "name" : "lua",
     "version>=" : "5.4.8"
