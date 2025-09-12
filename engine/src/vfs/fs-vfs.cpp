@@ -2,6 +2,7 @@
 #include "Umbra/umbra.hpp"
 
 #include <fstream>
+#include <fmt/format.h>
 
 using namespace std::string_literals;
 
@@ -51,13 +52,19 @@ void umbra::VFSFSMount::write_s(std::string_view virtual_path, std::vector<uint8
   file.close();
 }
 
-void umbra::VFSFSMount::execute_s(std::string_view virtual_path) const {
+void umbra::VFSFSMount::execute_s(std::string_view virtual_path, sol::state* lua_state) const {
   if (!exists_s(virtual_path)) {
-    umbra_fail("VFSFS: path did not resolve to an existing file");
+    umbra_fail("VFSPak: path did not resolve to an existing file");
   }
 
-  // TODO
-  umbra_fail("VFSFS: execute not yet implemented for VFSFSMount");
+  std::vector<uint8_t> script_bytes = read_s(virtual_path);
+  const std::string script(script_bytes.begin(), script_bytes.end());
+
+  const sol::protected_function_result result = lua_state->do_string(script, std::string(virtual_path), sol::load_mode::text);
+  if (!result.valid()) {
+    const sol::error err = result;
+    umbra_fail(fmt::format("Lua: error in script '{}': {}", virtual_path, err.what()));
+  }
 }
 
 void umbra::VFSFSMount::create_s(std::string_view virtual_path) const {
