@@ -20,7 +20,7 @@ using namespace std::string_literals;
 static std::string sanitize_alphanumeric(const std::string& str) {
   std::string out; out.reserve(str.size());
 
-  for (const uint8_t c : str) {
+  for (const char c : str) {
     if (std::isalnum(c)) {
       out.push_back(c);
     }
