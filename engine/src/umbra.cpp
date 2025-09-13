@@ -62,6 +62,7 @@ static int lua_exception(lua_State* L, const sol::optional<const std::exception&
 
 struct EngineState {
   umbra::Config config;
+  std::shared_ptr<umbra::BuiltinRegistry> builtin_registry;
   std::shared_ptr<umbra::ServiceRegistry> service_registry;
   std::shared_ptr<umbra::VFS> vfs;
   std::shared_ptr<sol::state> lua_state;
