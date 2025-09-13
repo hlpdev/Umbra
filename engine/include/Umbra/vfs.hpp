@@ -91,7 +91,7 @@ namespace umbra {
   class UMBRA_API VFS final {
   public:
 
-    explicit VFS(const std::shared_ptr<sol::state> &lua_state);
+    explicit VFS(const std::shared_ptr<sol::state>& lua_state);
     ~VFS() = default;
 
     VFS(const VFS&) = delete;
