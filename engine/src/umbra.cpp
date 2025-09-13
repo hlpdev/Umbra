@@ -7,6 +7,8 @@
 #include "Umbra/vfs.hpp"
 #include "Umbra/mounts/fs_mount.hpp"
 #include "Umbra/mounts/pak_mount.hpp"
+#include "Umbra/types/vector2.hpp"
+#include "Umbra/types/vector3.hpp"
 
 #define SOL_ALL_SAFETIES_ON 1
 #include <iostream>
@@ -94,6 +96,8 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
 
   state.vfs = std::make_shared<VFS>(state.lua_state);
 
+  state.type_registry->register_type<Vector2>();
+  state.type_registry->register_type<Vector3>();
   state.vfs->mount(
     "cfg://",
     std::make_unique<VFSPakMount>(
