@@ -86,6 +86,10 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
   state.lua_state->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
   state.lua_state->open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::coroutine, sol::lib::math, sol::lib::string, sol::lib::table);
 
+  state.builtin_registry = std::make_shared<BuiltinRegistry>(state.lua_state);
+
+  state.service_registry = std::make_shared<ServiceRegistry>(state.lua_state);
+
   state.vfs = std::make_shared<VFS>(state.lua_state);
 
   state.vfs->mount(
