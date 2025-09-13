@@ -2,6 +2,7 @@
 #include "Umbra/builtins.hpp"
 #include "Umbra/config.hpp"
 #include "Umbra/services.hpp"
+#include "Umbra/types.hpp"
 #include "Umbra/umbra_exception.hpp"
 #include "Umbra/vfs.hpp"
 #include "Umbra/mounts/fs_mount.hpp"
@@ -62,6 +63,7 @@ static int lua_exception(lua_State* L, const sol::optional<const std::exception&
 
 struct EngineState {
   umbra::Config config;
+  std::shared_ptr<umbra::TypeRegistry> type_registry;
   std::shared_ptr<umbra::BuiltinRegistry> builtin_registry;
   std::shared_ptr<umbra::ServiceRegistry> service_registry;
   std::shared_ptr<umbra::VFS> vfs;
@@ -86,8 +88,8 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
   state.lua_state->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
   state.lua_state->open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::coroutine, sol::lib::math, sol::lib::string, sol::lib::table);
 
+  state.type_registry = std::make_shared<TypeRegistry>(state.lua_state);
   state.builtin_registry = std::make_shared<BuiltinRegistry>(state.lua_state);
-
   state.service_registry = std::make_shared<ServiceRegistry>(state.lua_state);
 
   state.vfs = std::make_shared<VFS>(state.lua_state);
