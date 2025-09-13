@@ -63,6 +63,18 @@ static int lua_exception(lua_State* L, const sol::optional<const std::exception&
   return sol::stack::push(L, description);
 }
 
+static void bind_game(const std::shared_ptr<sol::state>& lua_state, const std::shared_ptr<umbra::ServiceRegistry>& service_registry, const int argc, char** argv) {
+  sol::table game = lua_state->create_named_table("game");
+
+  {
+    sol::table command_line_args = lua_state->create_table();
+    for (int i = 0; i < argc; ++i) {
+      command_line_args.add(std::string(argv[i] ? argv[i] : ""));
+    }
+    game["CommandLineArgs"] = command_line_args;
+  }
+}
+
 struct EngineState {
   umbra::Config config;
   std::shared_ptr<umbra::TypeRegistry> type_registry;
@@ -72,7 +84,7 @@ struct EngineState {
   std::shared_ptr<sol::state> lua_state;
 };
 
-int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t secret_size, int argc, char** argv) try {
+int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t secret_size, const int argc, char** argv) try {
   if (!entry_path || !*entry_path) {
     umbra_fail("Umbra: entry path is empty");
   }
@@ -98,6 +110,9 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
 
   state.type_registry->register_type<Vector2>();
   state.type_registry->register_type<Vector3>();
+
+  bind_game(state.lua_state, state.service_registry, argc, argv);
+
   state.vfs->mount(
     "cfg://",
     std::make_unique<VFSPakMount>(
