@@ -1,0 +1,71 @@
+SPDX-License-Identifier: LicenseRef-HPL-NC-SA-1.0
+
+The Hunter Public License — NonCommercial Share-Alike 1.0
+(HPL-NC-SA-1.0)
+
+Copyright (c) 2025 Hunter Pollock
+
+1. Definitions
+   1.1 “Licensed Work” means this repository and all files within it, including
+   modifications and derivatives you create based on it.
+   1.2 “You” means any individual or entity exercising permissions under this license.
+   1.3 “Convey” means to make available to any third party by any means, including
+   distribution, hosting, or providing as a service.
+   1.4 “Noncommercial Purposes” means uses that are not primarily intended for, or
+   directed toward, commercial advantage or monetary compensation. Examples of
+   commercial use include selling, licensing for a fee, charging for access,
+   paywalls, ad-supported distribution, or providing the Licensed Work or any
+   derivative as part of a paid product or service.
+
+2. Grant of Rights (Noncommercial Only)
+   Subject to the terms below, the Licensor grants you a worldwide, royalty-free,
+   non-exclusive, irrevocable (except as stated in Section 7) license to use, copy,
+   modify, and Convey the Licensed Work solely for Noncommercial Purposes.
+
+3. Share-Alike (Source Availability)
+   3.1 If you Convey the Licensed Work or any derivative, you must:
+   (a) Provide the complete corresponding source code under this same license, and
+   (b) Include a clear notice of any changes you made and the date of each change.
+   3.2 You may not add terms to your derivative that permit commercial use.
+
+4. Attribution & Notices
+   4.1 You must retain all copyright notices, license text, and any NOTICE file.
+   4.2 In your README, documentation, or about screen for any conveyed version,
+   you must provide prominent credit substantially as follows:
+   “Includes work by Hunter Pollock (https://github.com/hlpdev).”
+   4.3 This license does not grant any trademark rights.
+
+5. Patents
+   For Noncommercial Purposes only, the Licensor grants you a non-exclusive,
+   worldwide, royalty-free patent license to make, use, and modify the Licensed Work.
+   No patent rights are granted for commercial use.
+
+6. Commercial Use Requires Separate License
+   The Licensor reserves all rights for any commercial use. To obtain a commercial
+   license (e.g., to sell, charge for access, include in a paid product/service, or
+   run an ad-supported service using the Licensed Work), you must get written
+   permission from the Licensor.
+
+7. Termination
+   7.1 Any material breach automatically terminates your rights under this license.
+   7.2 If you cease violation within 30 days of notice, your license is reinstated
+   unless and until you breach again.
+   7.3 Upon termination, you must stop all use and remove any public offerings of
+   the Licensed Work and derivatives, except for copies received from others that
+   remain in compliance.
+
+8. Disclaimer of Warranty
+   THE LICENSED WORK IS PROVIDED “AS IS” AND “AS AVAILABLE,” WITHOUT WARRANTY OF ANY
+   KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+9. Limitation of Liability
+   IN NO EVENT WILL THE LICENSOR BE LIABLE FOR ANY DAMAGES OR OTHER LIABILITY,
+   WHETHER IN CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION
+   WITH THE LICENSED WORK OR THE USE OR OTHER DEALINGS IN THE LICENSED WORK.
+
+10. Severability
+    If any provision is unenforceable, the remaining provisions remain in effect.
+
+Licensor: Hunter Pollock
+Contact for commercial licensing: hunterpollock2006@gmail.com
