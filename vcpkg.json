@@ -1,48 +1,63 @@
 {
-  "name" : "umbra",
-  "version-string" : "1.0.0",
-  "builtin-baseline" : "4002e3abc6d3e468c73d2d9777a7dd96af5dc224",
-  "dependencies" : [ {
-    "name" : "vcpkg-cmake-config",
-    "version>=" : "2024-05-23"
-  }, {
-    "name" : "vcpkg-cmake-get-vars",
-    "version>=" : "2025-05-29"
-  }, {
-    "name" : "vcpkg-cmake",
-    "version>=" : "2024-04-23"
-  }, {
-    "name" : "libsodium",
-    "version>=" : "1.0.20#3"
-  }, {
-    "name" : "sol2",
-    "version>=" : "3.5.0"
-  }, {
-    "name" : "zstd",
-    "version>=" : "1.5.7"
-  }, {
-    "name" : "tomlplusplus",
-    "version>=" : "3.4.0#1"
-  }, {
-    "name" : "fmt",
-    "version>=" : "11.0.2#1"
-  }, {
-    "name" : "lua",
-    "version>=" : "5.4.8"
-  }, {
-    "name" : "glfw3",
-    "version>=" : "3.4#1"
-  }, {
-    "name" : "bgfx",
-    "version>=" : "1.129.8930-495"
-  }, {
-    "name" : "imgui",
-    "version>=" : "1.91.9"
-  }, {
-    "name" : "stb",
-    "version>=" : "2024-07-29#1"
-  }, {
-    "name" : "lodepng",
-    "version>=" : "2021-12-04#1"
-  } ]
+  "name": "umbra",
+  "version-string": "1.0.0",
+  "builtin-baseline": "120deac3062162151622ca4860575a33844ba10b",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake-config",
+      "version>=": "2024-05-23"
+    },
+    {
+      "name": "vcpkg-cmake-get-vars",
+      "version>=": "2025-05-29"
+    },
+    {
+      "name": "vcpkg-cmake",
+      "version>=": "2024-04-23"
+    },
+    {
+      "name": "libsodium",
+      "version>=": "1.0.20#3"
+    },
+    {
+      "name": "sol2",
+      "version>=": "3.5.0"
+    },
+    {
+      "name": "zstd",
+      "version>=": "1.5.7"
+    },
+    {
+      "name": "tomlplusplus",
+      "version>=": "3.4.0#1"
+    },
+    {
+      "name": "fmt",
+      "version>=": "11.0.2#1"
+    },
+    {
+      "name": "lua",
+      "version>=": "5.4.8"
+    },
+    {
+      "name": "glfw3",
+      "version>=": "3.4#1"
+    },
+    {
+      "name": "bgfx",
+      "version>=": "1.129.8930-495"
+    },
+    {
+      "name": "imgui",
+      "version>=": "1.91.9"
+    },
+    {
+      "name": "stb",
+      "version>=": "2024-07-29#1"
+    },
+    {
+      "name": "lodepng",
+      "version>=": "2021-12-04#1"
+    }
+  ]
 }
