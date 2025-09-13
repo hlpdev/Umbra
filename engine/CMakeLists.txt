@@ -34,6 +34,21 @@ find_package(Lua REQUIRED)
 target_include_directories(engine PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(engine PRIVATE ${LUA_LIBRARIES})
 
+find_package(imgui CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE imgui::imgui)
+
+find_package(glfw3 CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE glfw)
+
+find_package(bgfx CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE bgfx::bx bgfx::bgfx bgfx::bimg bgfx::bimg_decode)
+
+find_package(lodepng CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE lodepng)
+
+find_package(Stb REQUIRED)
+target_include_directories(engine PRIVATE ${Stb_INCLUDE_DIR})
+
 #[[ END DEPENDENCIES ]]
 
 target_sources(engine PRIVATE ${ENGINE_SRC} ${ENGINE_HDR})

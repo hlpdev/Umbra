@@ -29,5 +29,20 @@
   }, {
     "name" : "lua",
     "version>=" : "5.4.8"
+  }, {
+    "name" : "glfw3",
+    "version>=" : "3.4#1"
+  }, {
+    "name" : "bgfx",
+    "version>=" : "1.129.8930-495"
+  }, {
+    "name" : "imgui",
+    "version>=" : "1.91.9"
+  }, {
+    "name" : "stb",
+    "version>=" : "2024-07-29#1"
+  }, {
+    "name" : "lodepng",
+    "version>=" : "2021-12-04#1"
   } ]
 }
