@@ -7,8 +7,7 @@
 
 namespace umbra {
 
-  class UMBRA_API IBuiltin {
-  public:
+  struct IBuiltin {
 
     virtual ~IBuiltin() = default;
     virtual void register_builtin(const std::shared_ptr<sol::state>& lua_state) = 0;
