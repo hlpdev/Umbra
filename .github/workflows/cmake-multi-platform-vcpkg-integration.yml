@@ -52,17 +52,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             build-essential pkg-config autoconf automake libtool m4 \
-            nasm yasm ninja-build python3 git
+            nasm yasm ninja-build python3 git mono-complete ca-certificates-mono
 
       - name: Setup vcpkg (manifest-aware, cached)
         uses: lukka/run-vcpkg@v11
 
-      - name: Vcpkg Install
+      - name: Vcpkg Install (Windows)
+        if: startsWith(runner.os, 'Windows')
+        shell: pwsh
+        run: >
+          & "${env:VCPKG_ROOT}\vcpkg.exe" install --triplet "${{ matrix.triplet }}"
+          --x-manifest-root="${env:GITHUB_WORKSPACE}" --feature-flags="${env:VCPKG_FEATURE_FLAGS}" --debug
+
+      - name: Vcpkg Install (Linux/MacOS)
+        if: runner.os != 'Windows'
+        shell: bash
         run: |
-          ${{ env.VCPKG_ROOT }}/vcpkg install \
-            --triplet ${{ matrix.triplet }} \
-            --x-manifest-root=${{ github.workspace }} \
-            --feature-flags="${{ env.VCPKG_FEATURE_FLAGS }}" --debug
+          "$VCPKG_ROOT/vcpkg" install \
+            --triplet "${{ matrix.triplet }}" \
+            --x-manifest-root="${GITHUB_WORKSPACE}" \
+            --feature-flags="${VCPKG_FEATURE_FLAGS}" --debug
 
       - name: Configure (Windows)
         if: startsWith(runner.os, 'Windows')
