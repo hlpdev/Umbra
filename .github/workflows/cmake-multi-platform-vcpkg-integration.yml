@@ -58,7 +58,22 @@ jobs:
         uses: lukka/run-vcpkg@v11
 
       - name: Vcpkg Install (Windows)
-        run: "${env:VCPKG_ROOT}\vcpkg.exe" install --triplet "${{ matrix.triplet }}" --x-manifest-root="${env:GITHUB_WORKSPACE}" --feature-flags="${env:VCPKG_FEATURE_FLAGS}" --debug
+        if: startsWith(runner.os, 'Windows')
+        shell: pwsh
+        run: |
+          & "${env:VCPKG_ROOT}\vcpkg.exe" install `
+          --triplet "${{ matrix.triplet }}" `
+          --x-manifest-root="${env:GITHUB_WORKSPACE}" `
+          --feature-flags="${env:VCPKG_FEATURE_FLAGS}" --debug
+
+      - name: Vcpkg Install (Linux/MacOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          "$VCPKG_ROOT/vcpkg" install \
+            --triplet "${{ matrix.triplet }}" \
+            --x-manifest-root="${GITHUB_WORKSPACE}" \
+            --feature-flags="${VCPKG_FEATURE_FLAGS}" --debug
 
       - name: Configure (Windows)
         if: startsWith(runner.os, 'Windows')
