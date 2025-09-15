@@ -194,6 +194,20 @@ namespace umbra {
       user_type[sol::meta_function::to_string] = [](const DynamicArray& dynamic_array, const sol::this_state this_state) {
         return dynamic_array.to_string(this_state);
       };
+
+      user_type[sol::meta_function::index] = [](const DynamicArray& dynamic_array, const sol::stack_object key, const sol::this_state this_state) {
+        if (key.is<int>()) {
+          const int index = key.as<int>();
+          return dynamic_array.get(index, this_state);
+        }
+
+        if (key.is<double>()) {
+          const int index = static_cast<int>(key.as<double>());
+          return dynamic_array.get(index, this_state);
+        }
+
+        return make_object(this_state, sol::lua_nil);
+      };
     }
   };
 
