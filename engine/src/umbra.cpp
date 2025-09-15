@@ -8,6 +8,7 @@
 #include "Umbra/mounts/fs_mount.hpp"
 #include "Umbra/mounts/pak_mount.hpp"
 #include "Umbra/types/dynamic_array.hpp"
+#include "Umbra/types/static_array.hpp"
 #include "Umbra/types/vector2.hpp"
 #include "Umbra/types/vector3.hpp"
 
@@ -112,6 +113,7 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
   state.type_registry->register_type<Vector2>();
   state.type_registry->register_type<Vector3>();
   state.type_registry->register_type<DynamicArray>();
+  state.type_registry->register_type<StaticArray>();
 
   bind_game(state.lua_state, state.service_registry, argc, argv);
 

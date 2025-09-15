@@ -1,98 +1,56 @@
--- Quick test for DynamicArray (prints only)
--- Assumes DynamicArray and Vector2 are already bound via sol.
+-- Quick test for StaticArray (prints only)
 
-print("=== DynamicArray: basic construction ===")
-local A = DynamicArray.new()
-print("A (empty)        = " .. tostring(A))
-print("#A                = " .. tostring(#A))
-print("A:empty()         = " .. tostring(A:empty()))
-print("A:capacity()      = " .. tostring(A:capacity()))
-A:reserve(16)
-print("A:reserve(16); cap= " .. tostring(A:capacity()))
+print("=== StaticArray: construct & basics ===")
+local S = StaticArray.new(5)  -- 5 slots (prefilled with nil)
+print("S = " .. tostring(S))
+print("#S = " .. tostring(#S))
+print("S:empty() = " .. tostring(S:empty()))
 
--- Prepare some reusable values to test reference/identity behavior
-local tbl = { x = 1, y = { z = 2 } }
-local v2  = Vector2.new(1.5, -2.5)
-local fn  = function(x) return x * 2 end
+print("\n=== StaticArray: set/get (1-based) ===")
+local t = { k = 42 }
+local v = Vector2.new(3, -1)
+local f = function(x) return x + 1 end
 
-print("\n=== DynamicArray: push_back / front with mixed types ===")
-A:push_back(123)          -- number
-A:push_back("hello")      -- string
-A:push_back(true)         -- boolean
-A:push_back(nil)          -- nil
-A:push_back(tbl)          -- table (by reference)
-A:push_back(v2)           -- usertype
-A:push_back(fn)           -- function (by reference)
-A:push_front("FIRST!")    -- push at front
+S:set(1, 123)        -- number
+S:set(2, "hi")       -- string
+S:set(3, true)       -- boolean
+S:set(4, t)          -- table (reference)
+S:set(5, v)          -- usertype
 
-print("A = " .. tostring(A))
-print("#A = " .. tostring(#A))
+print("S:get(1) = " .. tostring(S:get(1)))
+print("S:get(2) = " .. tostring(S:get(2)))
+print("S:get(3) = " .. tostring(S:get(3)))
+print("S:get(4) = " .. tostring(S:get(4)))
+print("S:get(5) = " .. tostring(S:get(5)))
+print("S:get(6) (OOB) = " .. tostring(S:get(6)))  -- nil
 
-print("\n=== DynamicArray: get / set (1-based) ===")
-print("A:get(1)          = " .. tostring(A:get(1)))
-print("A:get(2)          = " .. tostring(A:get(2)))
-print("A:get(3)          = " .. tostring(A:get(3)))
-print("A:get(4)          = " .. tostring(A:get(4)))   -- nil
-print("A:get(5) (table)  = " .. tostring(A:get(5)))
-print("A:get(6) (Vector2)= " .. tostring(A:get(6)))
-print("A:get(7) (func)   = " .. tostring(A:get(7)))
-print("A:get(999) (OOB)  = " .. tostring(A:get(999))) -- should be nil
+print("\n=== StaticArray: fill ===")
+S:fill("x")
+print("S after fill('x') = " .. tostring(S))
 
-A:set(2, "world")   -- replace "hello" with "world"
-print("A after set(2,'world') = " .. tostring(A))
+print("\n=== StaticArray: identity behavior ===")
+S:set(4, t)
+S:set(5, f)
+print("S (with table+func) = " .. tostring(S))
 
-print("\n=== DynamicArray: insert / erase ===")
-A:insert(3, "MID")        -- insert before index 3
-print("A after insert(3,'MID') = " .. tostring(A))
-A:erase(4)                -- erase former 'true'
-print("A after erase(4)        = " .. tostring(A))
+local S2 = StaticArray.new(5)
+S2:set(1, "x"); S2:set(2, "x"); S2:set(3, "x"); S2:set(4, t); S2:set(5, f)
+print("S == S2 ? " .. tostring(S == S2))  -- true (rawequal per slot)
 
-print("\n=== DynamicArray: pop_front / pop_back ===")
-local pf = A:pop_front()
-print("pop_front() -> " .. tostring(pf))
-local pb = A:pop_back()
-print("pop_back()  -> " .. tostring(pb))
-print("A after pops = " .. tostring(A))
+local S3 = StaticArray.new(5)
+S3:set(1, "x"); S3:set(2, "x"); S3:set(3, "x"); S3:set(4, { k = 42 }); S3:set(5, f)
+print("S == S3 ? " .. tostring(S == S3))  -- false (different table identity)
 
-print("\n=== DynamicArray: concat and equality (rawequal per element) ===")
-local B = DynamicArray.from_table{ 9, 8, 7 }
-print("B = " .. tostring(B))
-local C = A + B
-print("C = A + B -> " .. tostring(C))
-print("#C = " .. tostring(#C))
-
--- D replicates A's contents including the SAME references (tbl/v2/fn) for equality to pass
-local D = DynamicArray.new()
--- rebuild same order as current A
-for i = 1, #A do D:push_back(A:get(i)) end
-print("A == D ? " .. tostring(A == D))
-
--- E uses deep-copied table with same contents but different identity -> should be false
-local E = DynamicArray.new()
-for i = 1, #A do
-    local v = A:get(i)
-    if i == 4 and type(v) == "table" then
-        E:push_back({ x = 1, y = { z = 2 } }) -- different table identity
-    else
-        E:push_back(v)
-    end
-end
-print("A == E ? " .. tostring(A == E))
-
-print("\n=== DynamicArray: to_table / from_table round-trip ===")
-local plain = A:to_table()        -- plain Lua array table
-print("plain (from A) type = " .. type(plain) .. ", len = " .. tostring(#plain))
+print("\n=== StaticArray: to_table / from_table ===")
+local plain = S:to_table()
+print("plain type = " .. type(plain) .. ", #plain = " .. tostring(#plain)) -- stops at first nil; here none at 1..5
 for i = 1, #plain do
     print("plain[" .. i .. "] = " .. tostring(plain[i]))
 end
 
-local F = DynamicArray.from_table(plain)
-print("F (from_table(plain)) = " .. tostring(F))
-print("A == F ? " .. tostring(A == F))
+local S4 = StaticArray.from_table({ 1, nil, 3 }) -- size = 1 (Lua length stops at nil)
+print("S4 (from_table) = " .. tostring(S4))
 
-print("\n=== DynamicArray: clear / shrink_to_fit ===")
-print("Before clear: size=" .. tostring(A:size()) .. ", cap=" .. tostring(A:capacity()))
-A:clear()
-print("After  clear: size=" .. tostring(A:size()) .. ", cap=" .. tostring(A:capacity()))
-A:shrink_to_fit()
-print("After  shrink_to_fit: cap=" .. tostring(A:capacity()))
+print("\n=== StaticArray: bounds safety ===")
+S:set(999, "nope")  -- no-op
+print("S:get(999) = " .. tostring(S:get(999))) -- nil
