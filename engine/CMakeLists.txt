@@ -55,6 +55,10 @@ target_sources(engine PRIVATE ${ENGINE_SRC} ${ENGINE_HDR})
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_definitions(engine PRIVATE UMBRA_BUILD_DLL)
 
+if (MSVC OR CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+    target_compile_options(engine PRIVATE /bigobj)
+endif()
+
 set_target_properties(engine PROPERTIES OUTPUT_NAME "umbra")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/templates/magics.t.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/Umbra/magics.hpp @ONLY)
