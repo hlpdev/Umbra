@@ -1,77 +1,98 @@
--- Quick test for Vector2 and Vector3 (prints only)
+-- Quick test for DynamicArray (prints only)
+-- Assumes DynamicArray and Vector2 are already bound via sol.
 
--- ===== Vector2 =====
-local a2 = Vector2.new(1.2, -3.4)
-local b2 = Vector2.new(-5.6, 7.8)
+print("=== DynamicArray: basic construction ===")
+local A = DynamicArray.new()
+print("A (empty)        = " .. tostring(A))
+print("#A                = " .. tostring(#A))
+print("A:empty()         = " .. tostring(A:empty()))
+print("A:capacity()      = " .. tostring(A:capacity()))
+A:reserve(16)
+print("A:reserve(16); cap= " .. tostring(A:capacity()))
 
-print("=== Vector2 ===")
-print("a2 = " .. tostring(a2))
-print("b2 = " .. tostring(b2))
+-- Prepare some reusable values to test reference/identity behavior
+local tbl = { x = 1, y = { z = 2 } }
+local v2  = Vector2.new(1.5, -2.5)
+local fn  = function(x) return x * 2 end
 
-print("abs(a2) = " .. tostring(a2:abs()))
-print("ceil(a2) = " .. tostring(a2:ceil()))
-print("floor(a2) = " .. tostring(a2:floor()))
-print("max(a2,b2) = " .. tostring(a2:max(b2)))
-print("min(a2,b2) = " .. tostring(a2:min(b2)))
+print("\n=== DynamicArray: push_back / front with mixed types ===")
+A:push_back(123)          -- number
+A:push_back("hello")      -- string
+A:push_back(true)         -- boolean
+A:push_back(nil)          -- nil
+A:push_back(tbl)          -- table (by reference)
+A:push_back(v2)           -- usertype
+A:push_back(fn)           -- function (by reference)
+A:push_front("FIRST!")    -- push at front
 
-print("length(a2) = " .. a2:length())
-print("dot(a2,b2) = " .. a2:dot(b2))
-print("cross(a2,b2) = " .. a2:cross(b2))
-print("sign(a2) = " .. tostring(a2:sign()))
+print("A = " .. tostring(A))
+print("#A = " .. tostring(#A))
 
-print("angle(a2,b2 unsigned) = " .. a2:angle(b2, false))
-print("angle(a2,b2 signed)   = " .. a2:angle(b2, true))
+print("\n=== DynamicArray: get / set (1-based) ===")
+print("A:get(1)          = " .. tostring(A:get(1)))
+print("A:get(2)          = " .. tostring(A:get(2)))
+print("A:get(3)          = " .. tostring(A:get(3)))
+print("A:get(4)          = " .. tostring(A:get(4)))   -- nil
+print("A:get(5) (table)  = " .. tostring(A:get(5)))
+print("A:get(6) (Vector2)= " .. tostring(A:get(6)))
+print("A:get(7) (func)   = " .. tostring(A:get(7)))
+print("A:get(999) (OOB)  = " .. tostring(A:get(999))) -- should be nil
 
-print("lerp(a2,b2, 0.25) = " .. tostring(a2:lerp(b2, 0.25)))
-print("fuzzy_eq(a2, a2+tiny, 1e-3) = " ..
-        tostring(a2:fuzzy_eq(a2 + Vector2.new(1e-4, 0), 1e-3)))
+A:set(2, "world")   -- replace "hello" with "world"
+print("A after set(2,'world') = " .. tostring(A))
 
-print("a2 + b2 = " .. tostring(a2 + b2))
-print("a2 - b2 = " .. tostring(a2 - b2))
-print("a2 * 2  = " .. tostring(a2 * 2))
-print("2 * a2  = " .. tostring(2 * a2))
-print("a2 * b2 (component) = " .. tostring(a2 * b2))
-print("a2 / 2  = " .. tostring(a2 / 2))
-print("a2 / b2 (component) = " .. tostring(a2 / b2))
-print("-a2 = " .. tostring(-a2))
-print("a2 == a2 ? " .. tostring(a2 == a2))
-print("a2 == b2 ? " .. tostring(a2 == b2))
+print("\n=== DynamicArray: insert / erase ===")
+A:insert(3, "MID")        -- insert before index 3
+print("A after insert(3,'MID') = " .. tostring(A))
+A:erase(4)                -- erase former 'true'
+print("A after erase(4)        = " .. tostring(A))
 
--- ===== Vector3 =====
-local a3 = Vector3.new(1, 0, 0)
-local b3 = Vector3.new(0, 1, 0)
-local axis = Vector3.new(0, 0, 1) -- +Z
+print("\n=== DynamicArray: pop_front / pop_back ===")
+local pf = A:pop_front()
+print("pop_front() -> " .. tostring(pf))
+local pb = A:pop_back()
+print("pop_back()  -> " .. tostring(pb))
+print("A after pops = " .. tostring(A))
 
-print("\n=== Vector3 ===")
-print("a3 = " .. tostring(a3))
-print("b3 = " .. tostring(b3))
+print("\n=== DynamicArray: concat and equality (rawequal per element) ===")
+local B = DynamicArray.from_table{ 9, 8, 7 }
+print("B = " .. tostring(B))
+local C = A + B
+print("C = A + B -> " .. tostring(C))
+print("#C = " .. tostring(#C))
 
-print("abs(a3)   = " .. tostring(a3:abs()))
-print("ceil(b3)  = " .. tostring(b3:ceil()))
-print("floor(b3) = " .. tostring(b3:floor()))
-print("max(a3,b3) = " .. tostring(a3:max(b3)))
-print("min(a3,b3) = " .. tostring(a3:min(b3)))
+-- D replicates A's contents including the SAME references (tbl/v2/fn) for equality to pass
+local D = DynamicArray.new()
+-- rebuild same order as current A
+for i = 1, #A do D:push_back(A:get(i)) end
+print("A == D ? " .. tostring(A == D))
 
-print("length(a3) = " .. a3:length())
-print("dot(a3,b3) = " .. a3:dot(b3))
-print("cross(a3,b3) = " .. tostring(a3:cross(b3)))
-print("sign(b3) = " .. tostring(b3:sign()))
+-- E uses deep-copied table with same contents but different identity -> should be false
+local E = DynamicArray.new()
+for i = 1, #A do
+    local v = A:get(i)
+    if i == 4 and type(v) == "table" then
+        E:push_back({ x = 1, y = { z = 2 } }) -- different table identity
+    else
+        E:push_back(v)
+    end
+end
+print("A == E ? " .. tostring(A == E))
 
-print("angle(a3,b3) unsigned = " .. a3:angle(b3))
-print("angle(a3,b3, +Z) signed = " .. a3:angle(b3, axis))
-print("angle(b3,a3, +Z) signed = " .. b3:angle(a3, axis))
+print("\n=== DynamicArray: to_table / from_table round-trip ===")
+local plain = A:to_table()        -- plain Lua array table
+print("plain (from A) type = " .. type(plain) .. ", len = " .. tostring(#plain))
+for i = 1, #plain do
+    print("plain[" .. i .. "] = " .. tostring(plain[i]))
+end
 
-print("lerp(a3,b3, 0.5) = " .. tostring(a3:lerp(b3, 0.5)))
-print("fuzzy_eq(a3, a3+tiny, 1e-3) = " ..
-        tostring(a3:fuzzy_eq(a3 + Vector3.new(0, 0, 5e-4), 1e-3)))
+local F = DynamicArray.from_table(plain)
+print("F (from_table(plain)) = " .. tostring(F))
+print("A == F ? " .. tostring(A == F))
 
-print("a3 + b3 = " .. tostring(a3 + b3))
-print("a3 - b3 = " .. tostring(a3 - b3))
-print("a3 * 2  = " .. tostring(a3 * 2))
-print("2 * a3  = " .. tostring(2 * a3))
-print("a3 * b3 (component) = " .. tostring(a3 * b3))
-print("a3 / 2  = " .. tostring(a3 / 2))
-print("a3 / b3 (component) = " .. tostring(a3 / b3))
-print("-a3 = " .. tostring(-a3))
-print("a3 == a3 ? " .. tostring(a3 == a3))
-print("a3 == b3 ? " .. tostring(a3 == b3))
+print("\n=== DynamicArray: clear / shrink_to_fit ===")
+print("Before clear: size=" .. tostring(A:size()) .. ", cap=" .. tostring(A:capacity()))
+A:clear()
+print("After  clear: size=" .. tostring(A:size()) .. ", cap=" .. tostring(A:capacity()))
+A:shrink_to_fit()
+print("After  shrink_to_fit: cap=" .. tostring(A:capacity()))
