@@ -9,6 +9,7 @@
 #include "Umbra/mounts/pak_mount.hpp"
 #include "Umbra/types/dynamic_array.hpp"
 #include "Umbra/types/static_array.hpp"
+#include "Umbra/types/singly_linked_list.hpp"
 #include "Umbra/types/vector2.hpp"
 #include "Umbra/types/vector3.hpp"
 
