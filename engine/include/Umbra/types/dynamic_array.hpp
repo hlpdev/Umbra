@@ -3,7 +3,6 @@
 #include "Umbra/types.hpp"
 
 #include <algorithm>
-#include <cstddef>
 #include <sstream>
 #include <string>
 #include <vector>
