@@ -77,4 +77,3 @@ function Vector3:fuzzy_eq(other, epsilon) end
 ---@operator div(number): Vector3
 ---@operator div(Vector3): Vector3
 ---@operator unm(): Vector3
----@operator len(): number
