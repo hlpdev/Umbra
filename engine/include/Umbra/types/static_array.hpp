@@ -12,80 +12,94 @@
 namespace umbra {
 
   struct UMBRA_API StaticArray final : IType {
-    std::vector<sol::object> data;
+  private:
+    std::unique_ptr<sol::object[]> data_;
+    int size_ = 0;
 
+  public:
     const char* name() override { return "StaticArray"; }
 
-    StaticArray() = default;
+    StaticArray() noexcept = default;
+    StaticArray(const StaticArray&) = delete;
+    StaticArray& operator=(const StaticArray&) = delete;
+    StaticArray(StaticArray&&) noexcept = default;
+    StaticArray& operator=(StaticArray&&) noexcept = default;
 
     StaticArray(const int count, const sol::this_state this_state) {
-      const size_t n = count > 0 ? count : 0;
-      data.reserve(n);
-      for (size_t i = 0; i < n; i++) {
-        data.emplace_back(make_object(this_state, sol::lua_nil));
-      }
-    }
-
-    int size() const noexcept { return static_cast<int>(data.size()); }
-    bool empty() const noexcept { return size() == 0; }
-
-    sol::object get(const int index, const sol::this_state this_state) const noexcept {
-      const int data_size = size();
-
-      if (index < 1 || index > data_size) {
-        return make_object(this_state, sol::lua_nil);
-      }
-
-      return data[index - 1];
-    }
-
-    void set(const int index, const sol::object& value) noexcept {
-      const int data_size = size();
-
-      if (index < 1 || index > data_size) {
+      size_ = std::max(0, count);
+      if (size_ == 0) {
+        data_.reset();
         return;
       }
 
-      data[index - 1] = value;
+      data_ = std::unique_ptr<sol::object[]>(new sol::object[static_cast<size_t>(size_)]);
+      for (int i = 0; i < size_; ++i) {
+        data_[i] = make_object(this_state, sol::lua_nil);
+      }
+    }
+
+    int size() const noexcept { return size_; }
+    bool empty() const noexcept { return size() == 0; }
+
+    sol::object get(const int index, const sol::this_state this_state) const noexcept {
+      if (index < 1 || index > size_) {
+        return make_object(this_state, sol::lua_nil);
+      }
+
+      return data_[index - 1];
+    }
+
+    void set(const int index, const sol::object& value) noexcept {
+      if (index < 1 || index > size_) {
+        return;
+      }
+
+      data_[index - 1] = value;
     }
 
     void fill(const sol::object &value) {
-      for (auto& entry : data) {
-        entry = value;
+      for (int i = 0; i < size_; ++i) {
+        data_[i] = value;
       }
     }
 
     static StaticArray from_table(const sol::table& table) {
-      StaticArray out;
-      const size_t data_size = table.size();
-      out.data.reserve(data_size);
+      const int len = static_cast<int>(table.size());
 
-      for (size_t i = 1; i <= data_size; ++i) {
-        out.data.emplace_back(table.get<sol::object>(i));
+      StaticArray out(len, sol::this_state{ table.lua_state() });
+      for (int i = 1; i <= len; ++i) {
+        out.data_[i - 1] = table.get<sol::object>(i);
       }
 
-      return out;
+      return std::move(out);
     }
 
     sol::as_table_t<std::vector<sol::object>> to_table() const {
-      return as_table(data);
+      std::vector<sol::object> vector;
+      vector.reserve(size_);
+
+      for (int i = 0; i < size_; ++i) {
+        vector.emplace_back(data_[i]);
+      }
+
+      return as_table(std::move(vector));
     }
 
     bool equals(const StaticArray& other, const sol::this_state this_state) const {
-      if (data.size() != other.data.size()) {
+      if (size_ != other.size_) {
         return false;
       }
 
       sol::state_view state_view(this_state);
       const sol::function raw_equal = state_view["rawequal"];
 
-      for (size_t i = 0; i < data.size(); ++i) {
+      for (int i = 0; i < size_; ++i) {
         if (raw_equal.valid()) {
-          if (!raw_equal(data[i], other.data[i])) {
+          if (!raw_equal(data_[i], other.data_[i])) {
             return false;
           }
         } else {
-          if (data[i] != other.data[i]) {
+          if (data_[i] != other.data_[i]) {
             return false;
           }
         }
@@ -100,18 +114,18 @@ namespace umbra {
       std::ostringstream string_stream;
 
       string_stream << "StaticArray(";
-      for (size_t i = 0; i < data.size(); ++i) {
+      for (size_t i = 0; i < size_; ++i) {
         if (i) {
           string_stream << ", ";
         }
 
-        if (data[i].is<std::string>()) {
-          string_stream << '\'' << data[i].as<std::string>() << '\'';
+        if (data_[i].is<std::string>()) {
+          string_stream << '\'' << data_[i].as<std::string>() << '\'';
           continue;
         }
 
         if (to_string.valid()) {
-          sol::object value = to_string(data[i]);
+          sol::object value = to_string(data_[i]);
           if (value.is<std::string>()) {
             string_stream << value.as<std::string>();
           } else {
@@ -164,7 +178,7 @@ namespace umbra {
       };
 
       user_type[sol::meta_function::new_index] = [](StaticArray& static_array, const sol::stack_object key, const sol::stack_object value) {
-        constexpr auto to_int = [&](const sol::stack_object k) -> std::optional<int> {
+        auto to_int = [](const sol::stack_object k) -> std::optional<int> {
           if (k.is<int>()) {
             return k.as<int>();
           }
@@ -175,10 +189,46 @@ namespace umbra {
         };
 
         if (const std::optional<int> optional_index = to_int(key)) {
-          const int index = *optional_index;
-          const auto new_value = sol::object(value);
-          static_array.set(index, std::move(new_value));
+          static_array.set(*optional_index, sol::object(value));
         }
+      };
+
+      user_type[sol::meta_function::ipairs] = [](StaticArray& static_array, sol::this_state this_state) {
+        auto iter = [this_state](void* static_array_anonymous, const int i) -> std::tuple<sol::object, sol::object> {
+          const auto* static_array_to_iter = static_cast<StaticArray*>(static_array_anonymous);
+
+          const int next = i + 1;
+          if (next > static_array_to_iter->size()) {
+            sol::object nil = make_object(this_state, sol::lua_nil);
+            return { nil, nil };
+          }
+
+          sol::object value = static_array_to_iter->get(next, this_state);
+          if (value.is<sol::lua_nil_t>()) {
+            sol::object nil = make_object(this_state, sol::lua_nil);
+            return { nil, nil };
+          }
+
+          return { make_object(this_state, next), value };
+        };
+
+        return std::make_tuple(iter, sol::light(&static_array), 0);
+      };
+
+      user_type[sol::meta_function::pairs] = [](StaticArray& static_array, sol::this_state this_state) {
+        auto iter = [this_state](void* static_array_anonymous, const int i) -> std::tuple<sol::object, sol::object> {
+          const auto* static_array_to_iter = static_cast<StaticArray*>(static_array_anonymous);
+
+          const int next = i + 1;
+          if (next > static_array_to_iter->size()) {
+            sol::object nil = make_object(this_state, sol::lua_nil);
+            return { nil, nil };
+          }
+
+          return { make_object(this_state, next), static_array_to_iter->get(next, this_state) };
+        };
+
+        return std::make_tuple(iter, sol::light(&static_array), 0);
       };
     }
 
