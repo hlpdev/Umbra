@@ -1,6 +1,3 @@
-local vector = Vector3.new()
-
-
 local data = StaticArray.new(9)
 
 data[1] = 1

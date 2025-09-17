@@ -4,7 +4,7 @@
 ---@class Vector2 : userdata
 ---@field x number
 ---@field y number
-local Vector2 = {}
+Vector2 = {}
 
 ---Creates a Vector2 with the specified X and Y values.
 ---@overload fun(): Vector2

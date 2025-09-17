@@ -1,0 +1,14 @@
+{
+    "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+    "Lua.workspace.library": [
+        "${workspaceFolder}/../luadefs/"
+    ],
+    "Lua.runtime.path": [
+        "?.lua",
+        "?/init.lua",
+        "../luadefs/?.lua",
+        "../luadefs/?/init.lua"
+    ],
+    "Lua.workspace.checkThirdParty": false,
+    "Lua.workspace.preloadFileSize": 500
+}

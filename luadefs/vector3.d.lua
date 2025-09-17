@@ -5,7 +5,7 @@
 ---@field x number
 ---@field y number
 ---@field z number
-local Vector3 = {}
+Vector3 = {}
 
 ---Creates a Vector3 with the specified X, Y, and Z values.
 ---@overload fun(): Vector3
