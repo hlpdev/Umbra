@@ -1,24 +1,16 @@
-local data = StaticArray.new(9)
+local data = SinglyLinkedList.new()
 
-data[1] = 1
-data[2] = 2
-data[3] = 3
-data[4] = 4
-data[5] = 5
-data[6] = 6
-data[7] = 7
-data[8] = 8
-data[9] = 9
+data:push_back(5)
+data:push_back(6)
+data:push_back(7)
+data:push_front(4)
 
-print("\n-- DATASET --")
 print(data)
 
-print("\n-- IPAIRS --")
-for i, v in ipairs(data) do
-    print("index:", i, "value:", v)
-end
+local front_item = data:pop_front()
+local back_item = data:pop_back()
 
-print("\n-- PAIRS --")
-for i, v in pairs(data) do
-    print("index:", i, "value:", v)
-end
+print(front_item)
+print(back_item)
+
+print(data)
