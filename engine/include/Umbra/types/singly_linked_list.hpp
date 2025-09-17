@@ -378,6 +378,10 @@ namespace umbra {
 
         return std::make_tuple(iter, make_object(this_state, sol::lua_nil), 0);
       };
+
+      user_type[sol::meta_function::concatenation] = [](const SinglyLinkedList& first, const SinglyLinkedList& second) {
+        return first.concat(second);
+      };
     }
 
   };
