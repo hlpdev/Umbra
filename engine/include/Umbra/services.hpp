@@ -8,10 +8,13 @@
 using namespace std::string_literals;
 
 namespace umbra {
-
   struct IService {
 
     virtual ~IService() = default;
+    virtual const char* name() = 0;
+
+  };
+
 
   };
 
