@@ -106,6 +106,9 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
   std::vector<uint8_t> key(secret, secret + secret_size);
 
   EngineState state{};
+
+  state.ogre_root = std::make_shared<Ogre::Root>("", "", "");
+
   state.lua_state = std::make_shared<sol::state>();
   state.lua_state->set_exception_handler(&lua_exception);
   state.lua_state->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
