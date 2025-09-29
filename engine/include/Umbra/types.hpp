@@ -15,23 +15,25 @@ namespace umbra {
 
   };
 
-  template<class T>
-  concept has_static_bind_name = requires(sol::state& lua_state, const char* n) {
-    { T::bind(lua_state, n) } -> std::same_as<void>;
-  };
+  namespace types_concepts {
+    template<class T>
+     concept has_static_bind_name = requires(sol::state& lua_state, const char* name) {
+        { T::bind(lua_state, name) } -> std::same_as<void>;
+     };
 
-  template<class T>
-  concept has_static_bind = requires(sol::state& lua_state) {
-    { T::bind(lua_state) } -> std::same_as<void>;
-  };
+    template<class T>
+    concept has_static_bind = requires(sol::state& lua_state) {
+      { T::bind(lua_state) } -> std::same_as<void>;
+    };
 
-  template<class T>
-  concept has_member_bind = requires(T t, sol::state& lua_state) {
-    { t.bind(lua_state) } -> std::same_as<void>;
-  };
+    template<class T>
+    concept has_member_bind = requires(T t, sol::state& lua_state) {
+      { t.bind(lua_state) } -> std::same_as<void>;
+    };
 
-  template<class>
-  inline constexpr bool always_false_v = false;
+    template<class>
+    inline constexpr bool always_false_v = false;
+  }
 
   class UMBRA_API TypeRegistry final {
   public:
@@ -58,14 +60,14 @@ namespace umbra {
 
       sol::state& lua_state = *lua_state_;
 
-      if constexpr (has_static_bind_name<T>) {
+      if constexpr (types_concepts::has_static_bind_name<T>) {
         T::bind(lua_state, type_name.c_str());
-      } else if constexpr (has_static_bind<T>) {
+      } else if constexpr (types_concepts::has_static_bind<T>) {
         T::bind(lua_state);
-      } else if constexpr (has_member_bind<T>) {
+      } else if constexpr (types_concepts::has_member_bind<T>) {
         instance.bind(lua_state);
       } else {
-        static_assert(always_false_v<T>,
+        static_assert(types_concepts::always_false_v<T>,
           "Type must provide one of:\n"
           "   static void bind(sol::state& lua_state, const char* name);\n"
           "   static void bind(sol::state& lua_state);\n"
