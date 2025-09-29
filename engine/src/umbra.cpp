@@ -93,15 +93,6 @@ static void bind_umbra_global(const umbra::EngineState* engine_state, const int 
   }
 }
 
-struct EngineState {
-  umbra::Config config;
-  std::shared_ptr<umbra::TypeRegistry> type_registry;
-  std::shared_ptr<umbra::BuiltinRegistry> builtin_registry;
-  std::shared_ptr<umbra::ServiceRegistry> service_registry;
-  std::shared_ptr<umbra::VFS> vfs;
-  std::shared_ptr<sol::state> lua_state;
-};
-
 int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t secret_size, const int argc, char** argv) try {
   if (!entry_path || !*entry_path) {
     umbra_fail("Umbra: entry path is empty");
