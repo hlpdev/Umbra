@@ -9,7 +9,7 @@ namespace umbra {
   class UMBRA_API VFSFSMount final : public IVFSMount {
   public:
 
-    explicit VFSFSMount(const std::filesystem::path& directory, const vfs::permissions::VFSPermission permissions);
+    explicit VFSFSMount(const std::filesystem::path& directory, vfs::permissions::VFSPermission permissions);
 
   protected:
     bool exists_s(std::string_view virtual_path) const override;
