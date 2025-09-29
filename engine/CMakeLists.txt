@@ -61,6 +61,35 @@ endif()
 
 set_target_properties(engine PROPERTIES OUTPUT_NAME "umbra")
 
+
+# vcpkg manifest builds usually set these. Provide sane fallbacks for CLion.
+if(NOT VCPKG_INSTALLED_DIR)
+    # CLion puts it next to the build dir:
+    set(VCPKG_INSTALLED_DIR "${CMAKE_BINARY_DIR}/vcpkg_installed")
+endif()
+if(NOT VCPKG_TARGET_TRIPLET)
+    # Common defaults; override from cache if you use another triplet.
+    if(WIN32)
+        set(VCPKG_TARGET_TRIPLET "x64-windows")
+    elseif(APPLE)
+        set(VCPKG_TARGET_TRIPLET "x64-osx")
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-linux")
+    endif()
+endif()
+
+set(OGRE_PLUGINS_DIR
+        "$<IF:$<CONFIG:Debug>,
+      ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/plugins/ogre,
+      ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/plugins/ogre>")
+
+add_custom_command(TARGET engine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying OGRE plugins from: ${OGRE_PLUGINS_DIR}"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${OGRE_PLUGINS_DIR}"
+        "$<TARGET_FILE_DIR:engine>"
+        VERBATIM)
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/templates/magics.t.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/Umbra/magics.hpp @ONLY)
 
 bundle_runtime_dlls(engine)
