@@ -1,17 +1,24 @@
 #include "Umbra/umbra.hpp"
 #include "Umbra/builtins.hpp"
 #include "Umbra/config.hpp"
-#include "Umbra/services.hpp"
-#include "Umbra/types.hpp"
+#include "Umbra/engine_state.hpp"
 #include "Umbra/umbra_exception.hpp"
+
 #include "Umbra/vfs.hpp"
 #include "Umbra/mounts/fs_mount.hpp"
 #include "Umbra/mounts/pak_mount.hpp"
-#include "Umbra/types/dynamic_array.hpp"
-#include "Umbra/types/static_array.hpp"
-#include "Umbra/types/singly_linked_list.hpp"
-#include "Umbra/types/vector2.hpp"
-#include "Umbra/types/vector3.hpp"
+
+#include "Umbra/types.hpp"
+#include "Umbra/types/data/file.hpp"
+#include "Umbra/types/data/vector2.hpp"
+#include "Umbra/types/data/vector3.hpp"
+#include "Umbra/types/ordered/dynamic_array.hpp"
+#include "Umbra/types/ordered/singly_linked_list.hpp"
+#include "Umbra/types/ordered/static_array.hpp"
+
+#include "Umbra/services.hpp"
+#include "Umbra/services/renderer.hpp"
+#include "Umbra/services/virtual_file_system.hpp"
 
 #define SOL_ALL_SAFETIES_ON 1
 #include <iostream>
