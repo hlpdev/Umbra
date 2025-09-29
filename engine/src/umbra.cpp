@@ -163,6 +163,39 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
     umbra_fail("Umbra: entry script not found");
   }
 
+  if (!state.vfs->exists("cfg://umbra.toml")) {
+    umbra_fail("Umbra: cfg.pak does not contain umbra.toml");
+  }
+
+  state.config = load_config(state.vfs->read("cfg://umbra.toml"));
+
+  { // Register Builtins
+    state.builtin_registry = std::make_shared<BuiltinRegistry>(state.lua_state);
+  }
+
+  { // Register Types
+    state.type_registry = std::make_shared<TypeRegistry>(state.lua_state);
+
+    state.type_registry->register_type<Vector2>();
+    state.type_registry->register_type<Vector3>();
+    state.type_registry->register_type<DynamicArray>();
+    state.type_registry->register_type<StaticArray>();
+    state.type_registry->register_type<SinglyLinkedList>();
+    state.type_registry->register_type<File>();
+  }
+
+  { // Register Services
+    state.service_registry = std::make_shared<ServiceRegistry>(state.lua_state);
+
+    state.service_registry->register_service<RendererService>(&state);
+    state.service_registry->register_service<VirtualFileSystemService>(&state);
+  }
+
+  bind_umbra_global(&state, argc, argv);
+
+  state.ogre_camera_node->setPosition(0, 0, 2.0f);
+  state.ogre_camera_node->lookAt(static_cast<Ogre::Vector3>(Vector3(0, 0, 0)), Ogre::Node::TS_WORLD);
+
   state.vfs->execute("src://"s + entry_path);
 
   return 0;
