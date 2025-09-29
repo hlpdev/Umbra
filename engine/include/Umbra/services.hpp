@@ -15,8 +15,25 @@ namespace umbra {
 
   };
 
+  namespace services_concepts {
+    template<class T>
+    concept has_static_bind_name = requires(sol::state& lua_state, const char* name) {
+      { T::bind(lua_state, name) } -> std::same_as<void>;
+    };
 
-  };
+    template<class T>
+    concept has_static_bind = requires(sol::state& lua_state) {
+      { T::bind(lua_state) } -> std::same_as<void>;
+    };
+
+    template<class T>
+    concept has_member_bind = requires(T t, sol::state& lua_state) {
+      { t.bind(lua_state) } -> std::same_as<void>;
+    };
+
+    template<class T>
+    inline constexpr bool always_false_v = false;
+  }
 
   class UMBRA_API ServiceRegistry final {
   public:
