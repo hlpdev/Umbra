@@ -46,6 +46,9 @@ target_link_libraries(engine PRIVATE lodepng)
 find_package(Stb REQUIRED)
 target_include_directories(engine PRIVATE ${Stb_INCLUDE_DIR})
 
+find_package(OGRE CONFIG REQUIRED)
+target_link_libraries(engine PRIVATE OgreMain OgreBites Codec_STBI OgrePaging)
+
 #[[ END DEPENDENCIES ]]
 
 target_sources(engine PRIVATE ${ENGINE_SRC} ${ENGINE_HDR})
