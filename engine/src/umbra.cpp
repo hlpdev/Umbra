@@ -114,34 +114,16 @@ int umbra::umbra_run(const char* entry_path, const uint8_t* secret, const size_t
   state.lua_state->set_panic(sol::c_call<decltype(&lua_panic), &lua_panic>);
   state.lua_state->open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::coroutine, sol::lib::math, sol::lib::string, sol::lib::table);
 
-  state.type_registry = std::make_shared<TypeRegistry>(state.lua_state);
-  state.builtin_registry = std::make_shared<BuiltinRegistry>(state.lua_state);
-  state.service_registry = std::make_shared<ServiceRegistry>(state.lua_state);
-
   state.vfs = std::make_shared<VFS>(state.lua_state);
 
-  state.type_registry->register_type<Vector2>();
-  state.type_registry->register_type<Vector3>();
-  state.type_registry->register_type<DynamicArray>();
-  state.type_registry->register_type<StaticArray>();
-  state.type_registry->register_type<SinglyLinkedList>();
-
-  bind_game(state.lua_state, state.service_registry, argc, argv);
-
   state.vfs->mount(
-    "cfg://",
-    std::make_unique<VFSPakMount>(
-      "cfg.pak",
-      key,
-      vfs::permissions::READ
-    )
-  );
-
-  if (!state.vfs->exists("cfg://umbra.toml")) {
-    umbra_fail("Umbra: cfg.pak does not contain umbra.toml");
-  }
-
-  state.config = load_config(state.vfs->read("cfg://umbra.toml"));
+      "cfg://",
+      std::make_unique<VFSPakMount>(
+        "cfg.pak",
+        key,
+        vfs::permissions::READ
+      )
+    );
 
   state.vfs->mount(
     "src://",
