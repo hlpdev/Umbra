@@ -75,15 +75,21 @@ static int lua_exception(lua_State* L, const sol::optional<const std::exception&
   return sol::stack::push(L, description);
 }
 
-static void bind_game(const std::shared_ptr<sol::state>& lua_state, const std::shared_ptr<umbra::ServiceRegistry>& service_registry, const int argc, char** argv) {
-  sol::table game = lua_state->create_named_table("game");
+static void bind_umbra_global(const umbra::EngineState* engine_state, const int argc, char** argv) {
+  sol::table umbra = engine_state->lua_state->create_named_table("umbra");
 
-  {
-    sol::table command_line_args = lua_state->create_table();
+  { // Initialize umbra.command_line_args
+    sol::table command_line_args = engine_state->lua_state->create_table();
     for (int i = 0; i < argc; ++i) {
       command_line_args.add(std::string(argv[i] ? argv[i] : ""));
     }
-    game["CommandLineArgs"] = command_line_args;
+    umbra["command_line_args"] = command_line_args;
+  }
+
+  { // Define umbra.get_service
+    umbra.set_function("get_service", [engine_state](const std::string& service_name) -> sol::object {
+      return engine_state->service_registry->fetch_service_lua(service_name);
+    });
   }
 }
 
