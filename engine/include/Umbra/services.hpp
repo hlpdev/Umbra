@@ -47,26 +47,59 @@ namespace umbra {
     ServiceRegistry& operator=(ServiceRegistry&&) = delete;
 
     template<class T, class... Args>
-    std::shared_ptr<T> register_service(const std::string& name, Args&&... args) {
+    bool register_service(Args&&... args) {
       static_assert(std::is_base_of_v<IService, T>, "Registered services must inherit from IService");
 
-      auto service = std::make_shared<T>(std::forward<Args>(args)...);
-      services_.emplace(name, std::move(service));
-      return service;
+      auto instance = std::make_shared<T>(std::forward<Args>(args)...);
+
+      const char* raw_name = instance->name();
+      const std::string type_name = (raw_name && *raw_name) ? raw_name : typeid(T).name();
+
+      if (services_.contains(type_name)) {
+        return false;
+      }
+
+      sol::state& lua_state = *lua_state_;
+
+      if constexpr (services_concepts::has_static_bind_name<T>) {
+        T::bind(lua_state, type_name.c_str());
+      } else if constexpr (services_concepts::has_static_bind<T>) {
+        T::bind(lua_state);
+      } else if constexpr (services_concepts::has_member_bind<T>) {
+        instance->bind(lua_state);
+      } else {
+        static_assert(services_concepts::always_false_v<T>,
+          "Service must provide one of:\n"
+          "   static void bind(sol::state& lua_state, const char* name);\n"
+          "   static void bind(sol::state& lua_state);\n"
+          "   void bind(sol::state& lua_state);"
+        );
+      }
+
+      sol::object lua_instance = make_object(*lua_state_, instance);
+
+      services_.emplace(type_name, instance);
+      lua_services_.emplace(type_name, std::move(lua_instance));
+      return true;
     }
 
     template<class T>
-    std::shared_ptr<T> fetch_service(const std::string& name) const {
+    std::shared_ptr<T> fetch_service(const std::string& name) {
       static_assert(std::is_base_of_v<IService, T>, "Registered services must inherit from IService");
 
       const auto it = services_.find(name);
-      return it == services_.end() ? nullptr : static_cast<T*>(it->second.get());
+      return it == services_.end() ? nullptr : it->second;
+    }
+
+    sol::object fetch_service_lua(const std::string& name) {
+      const auto it = lua_services_.find(name);
+      return it == lua_services_.end() ? make_object(*lua_state_, sol::nil) : it->second;
     }
 
   private:
     std::unordered_map<std::string, std::shared_ptr<IService>> services_;
-
-    std::shared_ptr<sol::state> lua_state_;
+    std::unordered_map<std::string, sol::object> lua_services_;
+    const std::shared_ptr<sol::state> lua_state_;
   };
 
 }
