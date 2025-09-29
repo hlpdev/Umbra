@@ -24,6 +24,8 @@
 #include <iostream>
 #include <vector>
 #include <sol/sol.hpp>
+#include <OgreRoot.h>
+#include <OgreEntity.h>
 
 using namespace std::string_literals;
 
