@@ -1,16 +1,13 @@
-local data = SinglyLinkedList.new()
+local renderer = umbra.get_service("Renderer")
+local vfs = umbra.get_service("VirtualFileSystem")
 
-data:push_back(5)
-data:push_back(6)
-data:push_back(7)
-data:push_front(4)
+local icon = vfs:read("assets://window_icon.png")
+renderer:set_icon(icon)
 
-print(data)
+while not renderer:should_close() do
+    renderer:begin_render()
 
-local front_item = data:pop_front()
-local back_item = data:pop_back()
+    -- here is where the game begins
 
-print(front_item)
-print(back_item)
-
-print(data)
+    renderer:end_render()
+end
