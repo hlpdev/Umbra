@@ -1,10 +1,9 @@
 #pragma once
 
 #include <ranges>
+#include <sol/sol.hpp>
 
 #include "Umbra/umbra.hpp"
-
-#include <sol/sol.hpp>
 
 using namespace std::string_literals;
 
