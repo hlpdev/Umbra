@@ -4,6 +4,7 @@
 #include <cmath>
 #include <string>
 #include <sol/sol.hpp>
+#include <OgreVector3.h>
 
 #include "Umbra/types.hpp"
 
@@ -18,6 +19,7 @@ namespace umbra {
 
     Vector3(const double x, const double y, const double z) noexcept : x(x), y(y), z(z) {}
     Vector3() noexcept : x(0), y(0), z(0) {}
+    explicit Vector3(const Ogre::Vector3& ogre_vector) noexcept : x(ogre_vector.x), y(ogre_vector.y), z(ogre_vector.z) {}
 
     Vector3 abs() const noexcept {
       return { std::abs(x), std::abs(y), std::abs(z) };
@@ -108,6 +110,8 @@ namespace umbra {
     Vector3& operator-=(const Vector3& rhs) noexcept { x -= rhs.x; y -= rhs.y; z -= rhs.z; return *this; }
     Vector3& operator*=(const double rhs) noexcept { x *= rhs; y *= rhs; z *= rhs; return *this; }
     Vector3& operator/=(const double rhs) noexcept { x /= rhs; y /= rhs; z /= rhs; return *this; }
+
+    explicit operator Ogre::Vector3() const noexcept { return Ogre::Vector3(x, y, z); }
 
     void bind(sol::state& lua_state) {
       sol::usertype<Vector3> user_type = lua_state.new_usertype<Vector3>(name(),
