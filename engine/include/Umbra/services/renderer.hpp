@@ -186,10 +186,10 @@ namespace umbra {
         return;
       }
 
-      window_width_ = new_size.x;
-      window_height_ = new_size.y;
+      window_width_ = static_cast<int>(new_size.x);
+      window_height_ = static_cast<int>(new_size.y);
 
-      glfwSetWindowSize(window_, new_size.x, new_size.y);
+      glfwSetWindowSize(window_, window_width_, window_height_);
     }
 
     void set_size_limit(const Vector2& minimum, const Vector2& maximum) const {
