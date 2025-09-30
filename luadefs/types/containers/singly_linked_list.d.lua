@@ -4,7 +4,7 @@
 ---@class SinglyLinkedList : userdata
 SinglyLinkedList = {}
 
----Creats a SinglyLinkedList
+---Creates a SinglyLinkedList
 ---@return SinglyLinkedList
 function SinglyLinkedList.new() end
 
